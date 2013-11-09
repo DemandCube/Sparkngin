@@ -5,9 +5,16 @@ Pronounced Spark Engine
 Sparkngin is a high-performance persistent message logger built on Nginx
 
 Out of the box includes:
-- persistent kafka client
+- persistent kafka client Realtime streaming logs to Kafka
 - heart beat
 - log cleanup
+- Connection retries when it looses connection to log destination
+- Log persistence if the log consumer connection is down
+
+Additonal:
+- Monitoring with Ganglia
+- Heart Alerting with Nagios
+
 
 This is part of [NeverwinterDP](https://github.com/DemandCube/NeverwinterDP)
 
