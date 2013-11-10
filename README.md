@@ -18,7 +18,6 @@ Additonal:
 
 This is part of [NeverwinterDP](https://github.com/DemandCube/NeverwinterDP)
 
-
 Community
 ====
 - [Mailing List](https://groups.google.com/forum/#!forum/sparkngin)
@@ -37,6 +36,10 @@ There is a question of how to implement quaranteed delivery of logs to kafka.
 - nginx write to ipc pipe -> secondary application that logs to disk and kafka
 - nginx write to zmq -> secondary application that logs to disk and kafka
 - nginx direct kafka driver that also spools to disk
+
+
+Milestones
+======
 
 Model Project to Eval
 ====
