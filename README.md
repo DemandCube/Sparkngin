@@ -40,6 +40,7 @@ There is a question of how to implement quaranteed delivery of logs to kafka.
 
 Milestones
 ======
+- [ ] Architecture Proposal
 - [ ] Sparkngin -> Zeromq (raw)
 - [ ] Sparkngin -> Zeromq (NW protocol V1)
 - [ ] Zeromq -> Kafka
