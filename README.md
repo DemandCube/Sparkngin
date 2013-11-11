@@ -99,3 +99,11 @@ Resources to Learn Development
 - Other Hello World <http://nutrun.com/weblog/2009/08/15/hello-world-nginx-module.html>
 - <https://github.com/perusio/nginx-hello-world-module>
 - Intro Slides on Dev <http://www.slideshare.net/trygvevea/extending-functionality-in-nginx-with-modules>
+- 
+
+Contributors
+=====
+- (Steve Morin)[https://github.com/smorin]
+- Juan Manuel Clavijo -  https://github.com/PROM3TH3U5
+- Cui Yingjie -  https://github.com/nihuo
+- Ben Speakmon - https://github.com/bspeakmon
