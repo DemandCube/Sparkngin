@@ -42,7 +42,7 @@ Milestones
 ======
 - [ ] Architecture Proposal
 - [ ] Sparkngin -> Zeromq (raw)
-- [ ] Sparkngin -> Zeromq (NW protocol V1)
+- [ ] Sparkngin -> Zeromq (NW protocol V1 - see below) 
 - [ ] Zeromq -> Kafka
 - [ ] Zeromq -> Flume
 - [ ] Zeromq -> Syslog
@@ -65,10 +65,11 @@ Milestones
 - [ ] Sparkngin/Ambari Deployment
 - [ ] Sparkngin/Ambari Monitoring/Ganglia
 - [ ] Sparkngin/Ambari Notification/Nagios
-- [ ] In
+- [ ] Event Schema Registration - json, avro, thrift protobuffs
 
-Protocol
+NW Protocol V1
 =====
+Purpose is to provide standard event data that is used to allow for systematic monitoring, analytics, retries and timebased partition notifications (Aka send a message when all data from hour 1 is sent)
 - timestamp
 - ip of referrer
 - topic
