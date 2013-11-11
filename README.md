@@ -65,7 +65,16 @@ Milestones
 - [ ] Sparkngin/Ambari Deployment
 - [ ] Sparkngin/Ambari Monitoring/Ganglia
 - [ ] Sparkngin/Ambari Notification/Nagios
-- [ ] 
+- [ ] In
+
+Protocol
+=====
+- timestamp
+- ip of referrer
+- topic
+- env
+- version
+- submitted timestamp
 
 Model Project to Eval
 ====
