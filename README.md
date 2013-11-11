@@ -40,6 +40,31 @@ There is a question of how to implement quaranteed delivery of logs to kafka.
 
 Milestones
 ======
+- [ ] Sparkngin -> Zeromq (raw)
+- [ ] Sparkngin -> Zeromq (NW protocol V1)
+- [ ] Zeromq -> Kafka
+- [ ] Zeromq -> Flume
+- [ ] Zeromq -> Syslog
+- [ ] Ganglia Integration
+- [ ] Nagios Integration
+- [ ] Sparkngin Client (raw)
+- [ ] Sparkngin Client (NW protocol V1)
+- [ ] Heartbeat Agent
+- [ ] Unix Man page
+- [ ] Guide
+- [ ] Build System - cmake or autotools
+- [ ] Untar and Deploy - Work out of the box
+- [ ] CentOS Package
+- [ ] CentOS Repo Setup and Deploy of CentOS Package
+- [ ] RHEL Package
+- [ ] RHEL Repo Setup and Deploy of CentOS Package
+- [ ] Mac DMG
+- [ ] ZeroConf system
+- [ ] HA logger
+- [ ] Sparkngin/Ambari Deployment
+- [ ] Sparkngin/Ambari Monitoring/Ganglia
+- [ ] Sparkngin/Ambari Notification/Nagios
+- [ ] 
 
 Model Project to Eval
 ====
