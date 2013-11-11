@@ -103,7 +103,7 @@ Resources to Learn Development
 
 Contributors
 =====
-- (Steve Morin)[https://github.com/smorin]
-- Juan Manuel Clavijo -  https://github.com/PROM3TH3U5
-- Cui Yingjie -  https://github.com/nihuo
-- Ben Speakmon - https://github.com/bspeakmon
+- [Steve Morin](https://github.com/smorin)
+- [Juan Manuel Clavijo](https://github.com/PROM3TH3U5)
+- [Cui Yingjie](https://github.com/nihuo)
+- [Ben Speakmon](https://github.com/bspeakmon)
