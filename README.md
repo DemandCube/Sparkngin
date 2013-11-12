@@ -108,3 +108,13 @@ Contributors
 - [Juan Manuel Clavijo](https://github.com/PROM3TH3U5)
 - [Cui Yingjie](https://github.com/nihuo)
 - [Ben Speakmon](https://github.com/bspeakmon)
+ 
+FAQ
+=====
+- Why Sparkngin?
+Sparkngin is mean to solve the short coming of realtime event streaming using restful endpoint.  Utilizing the logging and other connections in nginx is hard to configure and has limitations.
+
+- Why trust Sparkngin?
+Sparkngin is built on top of two main projects [Nginx](http://wiki.nginx.org/Main) which is the [worlds second most popular web server](http://news.netcraft.com/archives/2012/01/03/january-2012-web-server-survey.html) and [Zeromq](http://zeromq.org/) a high performance networking library.  Both provide a very solid core to realtime event streaming.  If you have questions about [why nginx](http://wiki.nginx.org/WhyUseIt), click the link.  Some people who use it are Facebook, [PInterest, Airbnb, Netflix, Hulu and Wordpress among others](http://wiki.nginx.org/Main).  Here is a summary of some nginx [benefits and features](http://www.wikivs.com/wiki/Apache_vs_nginx).
+
+
