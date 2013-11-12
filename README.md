@@ -38,6 +38,10 @@ There is a question of how to implement quaranteed delivery of logs to kafka.
 - nginx direct kafka driver that also spools to disk
 
 
+Example Flow
+=====
+Application sending messages -> Sparkngin [ Nginx -> Zeromq (Publisher) -> Zeromq (Subscriber) -> Kafka (Client call "Producer") ] -> Kafka -> (Client called consumer) -> Some Application
+
 Milestones
 ======
 - [ ] Architecture Proposal
