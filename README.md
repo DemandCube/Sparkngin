@@ -136,4 +136,57 @@ Sparkngin is mean to solve the short coming of realtime event streaming using re
 
 Sparkngin is built on top of two main projects [Nginx](http://wiki.nginx.org/Main) which is the [worlds second most popular web server](http://news.netcraft.com/archives/2012/01/03/january-2012-web-server-survey.html) and [Zeromq](http://zeromq.org/) a high performance networking library.  Both provide a very solid core to realtime event streaming.  If you have questions about [why nginx](http://wiki.nginx.org/WhyUseIt), click the link.  Some people who use it are Facebook, [PInterest, Airbnb, Netflix, Hulu and Wordpress among others](http://wiki.nginx.org/Main).  Here is a summary of some nginx [benefits and features](http://www.wikivs.com/wiki/Apache_vs_nginx).
 
+- What is the difference between timestamp and submitted timestamp
+
+The concept is the timestamp is the system timestamp of that machine, which the submitted timestamp is a optional timestamp you might submit in the request.  So if for example you have data that you want to submit an hour later, you might want to organize it around a submitted timestamp rather than by the system recorded timestamp of the user.
+
+
+
+Design
+=====
+
+####Architecture
+Whole system is consit of two parts: 
+
+1. Nginx module: Core
+2. Adaptors: They can be used to link Sparkngin Nginx module with 3rdparty system, e.g. Kafka, Flume....
+
+####Sparkngin Nginx module
+- Init zeromq publisher mode in nginx init master callback
+- Create a shared memory buffer in init master callback, the buffer will be used to cache log data
+- Publish Nginx http log activity data via zeromq
+- If there are not any subscriber, log data will be stored into buffer. The buffer is orgnized as a loop linked list. Oldest log will be overwritten when the buffer is full. 
+
+
+####Configuration of Sparkngin Nginx module
+- listen port
+- cache buffer size
+- gzip mode on/off
+- output format: json / plain text / binary
+- output fields customization
+
+
+####HTTP API
+- /log: log event
+The interface could be used to added log data into log stream. 
+
+e.g. /log?level=info&type=http&stimestamp=134545634345&ver=1.0&topic=test&env=testdata&ip=1.1.1.1
+
+- /status: some statistic results of running which is formated in json
+- /imok: get heart beat signal
+
+
+####Log Field
+- ip
+- timestamp
+- submitted timestamp
+- type
+- level
+- topic
+- env
+- version
+- referrer
+- user agent
+- data which is parsed from cookie
+
 
