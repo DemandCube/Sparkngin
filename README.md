@@ -42,7 +42,12 @@ Example Flow
 =====
 Application sending messages -> Sparkngin [ Nginx -> Zeromq (Publisher) -> Zeromq (Subscriber) -> Kafka (Client call "Producer") ] -> Kafka -> (Client called consumer) -> Some Application
 
-Milestones
+Roadmap
+======
+- V0.1
+  1 [ ] Build System - cmake or autotools
+
+Feature Todo
 ======
 - [ ] Architecture Proposal
 - [ ] Sparkngin -> Zeromq (raw)
@@ -66,10 +71,13 @@ Milestones
 - [ ] Mac DMG
 - [ ] ZeroConf system
 - [ ] HA logger
+- [ ] Log stash integration
+- [ ] Elastic search integration
 - [ ] Sparkngin/Ambari Deployment
 - [ ] Sparkngin/Ambari Monitoring/Ganglia
 - [ ] Sparkngin/Ambari Notification/Nagios
 - [ ] Event Schema Registration - json, avro, thrift protobuffs
+
 
 NW Protocol V1
 =====
@@ -115,10 +123,13 @@ Contributors
  
 FAQ
 =====
+
 - Why Sparkngin?
+
 Sparkngin is mean to solve the short coming of realtime event streaming using restful endpoint.  Utilizing the logging and other connections in nginx is hard to configure and has limitations.
 
 - Why trust Sparkngin?
+
 Sparkngin is built on top of two main projects [Nginx](http://wiki.nginx.org/Main) which is the [worlds second most popular web server](http://news.netcraft.com/archives/2012/01/03/january-2012-web-server-survey.html) and [Zeromq](http://zeromq.org/) a high performance networking library.  Both provide a very solid core to realtime event streaming.  If you have questions about [why nginx](http://wiki.nginx.org/WhyUseIt), click the link.  Some people who use it are Facebook, [PInterest, Airbnb, Netflix, Hulu and Wordpress among others](http://wiki.nginx.org/Main).  Here is a summary of some nginx [benefits and features](http://www.wikivs.com/wiki/Apache_vs_nginx).
 
 
