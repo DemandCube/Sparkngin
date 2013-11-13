@@ -190,3 +190,75 @@ e.g. /log?level=info&type=http&stimestamp=134545634345&ver=1.0&topic=test&env=te
 - data which is parsed from cookie
 
 
+
+
+Configuration directives
+=====
+sparkngin_listen
+---------------
+* **syntax**: `sparkngin_listen port`
+* **default**: `7000`
+* **context**: `http`
+
+Set listen port of zeromq publisher. 
+
+
+sparkngin_buf_size
+---------------
+* **syntax**: `sparkngin_buf_size size`
+* **default**: `4M`
+* **context**: `http`
+
+Set log data cache buffer size.
+
+
+sparkngin_gzip
+---------------
+* **syntax**: `sparkngin_gzip on/off`
+* **default**: `off`
+* **context**: `server`, `location`
+
+Set gzip switch on/off. 
+
+
+sparkngin_format
+---------------
+* **syntax**: `sparkngin_format (json|plain) ['delimiter']`
+* **default**: `plain ' '`
+* **context**: `server`, `location`
+
+Set output format:
+
+- json		- log data will be exported in json format
+- plain		- log data will be exported in plain text format, each field is sperated by delimiter.
+
+
+sparkngin_admin
+---------------
+* **syntax**: `sparkngin_admin`
+* **default**: ``
+* **context**: `server`, `location`
+
+Set admin root location.
+
+
+sparkngin_fields
+---------------
+* **syntax**: `sparkngin_fields fields list`
+* **default**: `%version% %ip% %time_stamp% %level% %topic% %user-agent% %referrer% %cookie%`
+* **context**: `server`, `location`
+
+Set output fields. 
+Below are available fields:
+
+- version
+- ip
+- time_stamp
+- submitted_timestamp
+- level			- info, warnning, error...
+- topic
+- user-agent
+- referrer
+- cookie		- whole cookie data
+- cookie_[cooklie_key]		- e.g. %cookie_user_id%, will parse 'user_id' value from cookie. 
+- env
