@@ -233,13 +233,24 @@ Set output format:
 - plain		- log data will be exported in plain text format, each field is sperated by delimiter.
 
 
-sparkngin_admin
+sparkngin_root_loc
 ---------------
-* **syntax**: `sparkngin_admin`
+* **syntax**: `sparkngin_root_loc`
 * **default**: ``
-* **context**: `server`, `location`
+* **context**: `location`
 
-Set admin root location.
+Set sparkngin root location.
+
+e.g.
+
+With below configuration, we can access /sn/imok, /sn/stat, /sn/log.
+
+>  location /sn {
+>            sparkngin_root_loc ;
+>        }
+
+       
+  
 
 
 sparkngin_fields
