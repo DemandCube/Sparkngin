@@ -216,7 +216,7 @@ sparkngin_gzip
 ---------------
 * **syntax**: `sparkngin_gzip on/off`
 * **default**: `off`
-* **context**: `server`, `location`
+* **context**: `http`
 
 Set gzip switch on/off. 
 
@@ -225,7 +225,7 @@ sparkngin_format
 ---------------
 * **syntax**: `sparkngin_format (json|plain) ['delimiter']`
 * **default**: `plain ' '`
-* **context**: `server`, `location`
+* **context**: `http`
 
 Set output format:
 
@@ -257,7 +257,7 @@ sparkngin_fields
 ---------------
 * **syntax**: `sparkngin_fields fields list`
 * **default**: `%version% %ip% %time_stamp% %level% %topic% %user-agent% %referrer% %cookie%`
-* **context**: `server`, `location`
+* **context**: `http`
 
 Set output fields. 
 Below are available fields:
@@ -273,3 +273,44 @@ Below are available fields:
 - cookie		- whole cookie data
 - cookie_[cooklie_key]		- e.g. %cookie_user_id%, will parse 'user_id' value from cookie. 
 - env
+
+
+
+Sample Nginx configuration
+=====
+
+```
+worker_processes  2;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    sparkngin_listen 7000;
+    sparkngin_gzip on;
+    sparkngin_format json;
+    sparkngin_fields %version% %ip% %time_stamp% %level% %topic% %user-agent% %referrer% %cookie%;
+    
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+
+    keepalive_timeout  65;
+
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location / {
+            root   html;
+            index  index.html index.htm;
+        }
+        
+        location /sparkngin {
+            sparkngin_root_loc ;
+        }
+    }
+}
+```
