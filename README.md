@@ -44,8 +44,12 @@ Application sending messages -> Sparkngin [ Nginx -> Zeromq (Publisher) -> Zerom
 
 Roadmap
 ======
-- V0.1
-  1 [ ] Build System - cmake or autotools
+- M0.1
+- [Issue: 1 - Document proposed high level Architecture for Sparkngin](https://github.com/DemandCube/Sparkngin/issues/1)
+- [Issue: 2 - Create mockup of new configuration directives that Sparkngin will provide](https://github.com/DemandCube/Sparkngin/issues/2)
+- [Issue: 3 - Create nginx configuration for Sparkngin](https://github.com/DemandCube/Sparkngin/issues/3)
+- [Issue: 4 - Create sample zeromq socket reader python commandline application](https://github.com/DemandCube/Sparkngin/issues/4)
+- [Issue: 5 - Create sample zeromq socket reader c commandline application](https://github.com/DemandCube/Sparkngin/issues/5)
 
 Feature Todo
 ======
