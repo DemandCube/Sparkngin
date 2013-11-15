@@ -44,7 +44,7 @@ There are many ways you can contribute towards the project. A few of these are:
 
 **Provide Patches**: We encourage you to assign the relevant [GitHub Issue](https://github.com/DemandCube/Sparkngin/issues?state=open) to yourself and supply a patch or [pull request](https://github.com/DemandCube/Sparkngin/pulls) for it. The patch you provide can be code, documentation, tests, configs, build changes, or any combination of these.
 
-How to Patches/Code
+How to Submit - Patches/Code
 ======
 
 1. **Create a patch**
