@@ -2,25 +2,25 @@ Sparkngin
 ==========
 Pronounced Spark Engine  
 
-Sparkngin is a high-performance persistent message stream engine built on Nginx.  Sparkngin can function as logging, event or message streaming solution.
+Sparkngin is a high-performance persistent message stream engine built on Nginx.  Sparkngin can function as logging, event or message streaming solution.  When used with Neverwinter Sparkngin can stream data to data repositories like Hive, Hbase, Storm and HDFS.
 
-This is part of [NeverwinterDP](https://github.com/DemandCube/NeverwinterDP)
+- This is part of [NeverwinterDP](https://github.com/DemandCube/NeverwinterDP)
 
 The Problem
 ======
-The core problem is how to log data from a rest call and log it in high-performance way that 
-allows for the delivery of messages to Kafka even when the connection is down.
-
+The core problem is how to stream data from a rest calls (an endpoint) and send it through a horizonatally scalable HA high-performance way that 
+allows for the delivery of messages to an end system like (Kafka, Storm, HDFS ...)
 
 Features
 ======
 
 Out of the box includes:
-- persistent kafka client Realtime streaming logs to Kafka
-- heart beat
-- log cleanup
+- Data, Log, Event, Message - Ingestion/Streaming
+- Heart Beat
+- Log cleanup
+- Persistent kafka client Realtime streaming logs to Kafka
 - Connection retries when it looses connection to log destination
-- Log persistence if the log consumer connection is down
+- Log persistence if the log producer connection is down
 
 Additonal:
 - Monitoring with Ganglia
