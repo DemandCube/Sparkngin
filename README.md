@@ -2,7 +2,18 @@ Sparkngin
 ==========
 Pronounced Spark Engine  
 
-Sparkngin is a high-performance persistent message logger built on Nginx
+Sparkngin is a high-performance persistent message stream engine built on Nginx.  Sparkngin can function as logging, event or message streaming solution.
+
+This is part of [NeverwinterDP](https://github.com/DemandCube/NeverwinterDP)
+
+The Problem
+======
+The core problem is how to log data from a rest call and log it in high-performance way that 
+allows for the delivery of messages to Kafka even when the connection is down.
+
+
+Features
+======
 
 Out of the box includes:
 - persistent kafka client Realtime streaming logs to Kafka
@@ -15,19 +26,26 @@ Additonal:
 - Monitoring with Ganglia
 - Heart Alerting with Nagios
 
-
-This is part of [NeverwinterDP](https://github.com/DemandCube/NeverwinterDP)
-
 Community
-====
+======
 - [Mailing List](https://groups.google.com/forum/#!forum/sparkngin)
 - IRC channel #Sparkngin on irc.freenode.net
 
-
-The Problem
+How to Contribute
 ======
-The core problem is how to log data from a rest call and log it in high-performance way that 
-allows for the delivery of messages to Kafka even when the connection is down.
+
+There are many ways you can contribute towards the project. A few of these are:
+
+**Jump in on discussions**: It is possible that someone initiates a thread on the [Mailing List](https://groups.google.com/forum/#!forum/sparkngin) describing a problem that you have dealt with in the past. You can help the project by chiming in on that thread and guiding that user to overcome or workaround that problem or limitation.
+
+**File Bugs**: If you notice a problem and are sure it is a bug, then go ahead and file a [GitHub Issue](https://github.com/DemandCube/Sparkngin/issues?state=open). If however, you are not very sure that it is a bug, you should first confirm it by discussing it on the [Mailing List](https://groups.google.com/forum/#!forum/sparkngin).
+
+**Review Code**: If you see that a [GitHub Issue](https://github.com/DemandCube/Sparkngin/issues?state=open) has a "patch available" status, go ahead and review it. The other way is to review code submited with a [pull request](https://github.com/DemandCube/Sparkngin/pulls), it is the prefered way.  It cannot be stressed enough that you must be kind in your review and explain the rationale for your feedback and suggestions. Also note that not all review feedback is accepted - often times it is a compromise between the contributor and reviewer. If you are happy with the change and do not spot any major issues, then +1 it.
+
+**Provide Patches**: We encourage you to assign the relevant [GitHub Issue](https://github.com/DemandCube/Sparkngin/issues?state=open) to yourself and supply a patch or [pull request](https://github.com/DemandCube/Sparkngin/pulls) for it. The patch you provide can be code, documentation, tests, configs, build changes, or any combination of these.
+
+How to Contribute Code
+======
 
 Potential Implementation Strategies
 ======
