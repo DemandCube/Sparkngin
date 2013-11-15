@@ -44,8 +44,45 @@ There are many ways you can contribute towards the project. A few of these are:
 
 **Provide Patches**: We encourage you to assign the relevant [GitHub Issue](https://github.com/DemandCube/Sparkngin/issues?state=open) to yourself and supply a patch or [pull request](https://github.com/DemandCube/Sparkngin/pulls) for it. The patch you provide can be code, documentation, tests, configs, build changes, or any combination of these.
 
-How to Contribute Code
+How to Patches/Code
 ======
+
+1. **Create a patch**
+  * Make sure it applies cleanly against trunk
+1. **Test**
+  * If code supply tests and unit test
+1. **Propose New Features or API**
+  * Document the new Feature or API in the Wiki, the get consensus by discussing on the mailing list
+1. **Open a GitHub Ticket**
+  * Create the patch or pull request, attach your patch or pull request to the Issue.
+    * Your changes should be well-formated, readable and lots of comments
+    * Add tests
+    * Add to documentation, especially if it changes configs
+    * Add documentation so developers, can understand the feature or API to continue to contribute
+  * Document information about the issue and approach you took to fix it and put it in the issue.
+  * Send a message on the mailing list requesting a commiter review it.
+  * Nag the list if we (commiters) don't review it and followup with us.
+
+1. **How to create a patch file**: 
+  * The preferred naming convention for Sparkngin patches is `SPARKNGIN-12345-0.patch` where `12345` is the Issue number and `0` is the version of the patch. 
+  * Patch Command:
+    * `$ git diff > /path/to/SPARKNGIN-1234-0.patch`
+
+1. **How to apply someone else's patch file**: 
+```
+$ cd ~/src/Sparkngin # or wherever you keep the root of your Sparkngin source tree 
+$ patch -p1 < SPARKNGIN-1234-0.patch # Default when using git diff
+$ patch -p0 < SPARKNGIN-1234-0.patch # When using git diff --no-prefix
+```
+
+## Git Workflow
+  * [Git+Workflow](https://cwiki.apache.org/confluence/display/KAFKA/Git+Workflow)
+
+1. Reviewing Patches
+  * [Find issues with label "Patch Available"](https://github.com/DemandCube/Sparkngin/issues?labels=patch+avaliable&page=1&state=open), look over and give your feedback in the issue as necessary.  If there are questions discuss in the [Mailing List](https://groups.google.com/forum/#!forum/sparkngin).
+
+
+
 
 Potential Implementation Strategies
 ======
