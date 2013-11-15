@@ -2,7 +2,7 @@ Sparkngin
 ==========
 Pronounced Spark Engine  
 
-Sparkngin is a high-performance persistent message stream engine built on Nginx.  Sparkngin can function as logging, event or message streaming solution.  When used with Neverwinter Sparkngin can stream data to data repositories like Hive, Hbase, Storm and HDFS.
+Sparkngin is a high-performance persistent message stream engine built on Nginx.  Sparkngin can function as logging, event or message streaming solution.  When used with Neverwinter Data Platform Sparkngin can stream data to data repositories like Hive, Hbase, Storm and HDFS.
 
 - This is part of [NeverwinterDP](https://github.com/DemandCube/NeverwinterDP)
 
@@ -75,11 +75,20 @@ $ patch -p1 < SPARKNGIN-1234-0.patch # Default when using git diff
 $ patch -p0 < SPARKNGIN-1234-0.patch # When using git diff --no-prefix
 ```
 
-## Git Workflow
-  * [Git+Workflow](https://cwiki.apache.org/confluence/display/KAFKA/Git+Workflow)
-
 1. Reviewing Patches
   * [Find issues with label "Patch Available"](https://github.com/DemandCube/Sparkngin/issues?labels=patch+avaliable&page=1&state=open), look over and give your feedback in the issue as necessary.  If there are questions discuss in the [Mailing List](https://groups.google.com/forum/#!forum/sparkngin).
+
+
+## Git Workflow
+  * [Suggested Git Workflows](https://cwiki.apache.org/confluence/display/KAFKA/Git+Workflow)
+
+## Github Help
+  * [How push from your local repo to github](https://help.github.com/articles/pushing-to-a-remote#pushing-a-branch)
+  * [How to send a pull request](https://help.github.com/articles/using-pull-requests)
+  * [How to sync a forked repo on github](https://help.github.com/articles/syncing-a-fork)
+
+## TODO Document the recommended workflow in Github 
+  * fork repo -> make changes -> sync forked repo local -> push to github forked repo -> do pull request
 
 
 
