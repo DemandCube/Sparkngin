@@ -21,10 +21,12 @@ Out of the box includes:
 - Persistent kafka client Realtime streaming logs to Kafka
 - Connection retries when it looses connection to log destination
 - Log persistence if the log producer connection is down
-
-Additonal:
 - Monitoring with Ganglia
 - Heart Alerting with Nagios
+
+Table of Contents
+- TODO
+
 
 Community
 ======
