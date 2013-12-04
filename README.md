@@ -341,6 +341,9 @@ Below are available fields:
 - env
 
 
+Log Config Spec
+==============
+- [Varnish Kafka Config Example](https://github.com/wikimedia/varnishkafka/blob/master/varnishkafka.conf.example)
 
 Sample Nginx configuration
 =====
