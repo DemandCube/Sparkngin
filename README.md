@@ -170,7 +170,7 @@ Community Threads
 - <http://stackoverflow.com/questions/8765385/mongrel2-vs-nginxzeromq>
 - <http://stackoverflow.com/questions/15287196/websockets-behind-nginx-triggered-by-zeromq>
 
-Resources to Learn Development
+Resources to Learn Development Nginx
 ====
 - <http://www.evanmiller.org/nginx-modules-guide.html>
 - <http://www.evanmiller.org/nginx-modules-guide-advanced.html>
@@ -182,7 +182,12 @@ Resources to Learn Development
 - Other Hello World <http://nutrun.com/weblog/2009/08/15/hello-world-nginx-module.html>
 - <https://github.com/perusio/nginx-hello-world-module>
 - Intro Slides on Dev <http://www.slideshare.net/trygvevea/extending-functionality-in-nginx-with-modules>
+- In russian <http://www.grid.net.ru/nginx/nginx-modules.html>
 
+Example Nginx Modules
+- <http://wiki.nginx.org/3rdPartyModules>
+- Redis Log Module <http://www.binpress.com/app/nginx-redislog-module/998>
+- Socket Log Module <http://www.binpress.com/app/nginx-socketlog-module/1030>
 
 Contributors
 =====
