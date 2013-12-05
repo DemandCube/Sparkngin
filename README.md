@@ -183,6 +183,8 @@ Resources to Learn Development Nginx
 - <https://github.com/perusio/nginx-hello-world-module>
 - Intro Slides on Dev <http://www.slideshare.net/trygvevea/extending-functionality-in-nginx-with-modules>
 - In russian <http://www.grid.net.ru/nginx/nginx-modules.html>
+- <http://www.grid.net.ru/>
+- <http://www.nginxguts.com/>
 
 Example Nginx Modules
 - <http://wiki.nginx.org/3rdPartyModules>
