@@ -1,0 +1,24 @@
+# Sample configuration for zpubgangliamon Ganglia module
+# author: Hikmat Dhamee
+
+modules {
+  module {
+    name = "zpubgangliamon"
+    language = "python"
+    param groups {
+        value = "Custom_Metrices"
+    } 
+    param num_msg_published {
+        value = "ipc://localhost:5656"
+    }    
+  }
+}
+
+collection_group {
+  collect_every = 10
+  time_threshold = 60
+  metric {
+      name = "zpub_num_msg"
+      title = "number of messages published by zmq"
+  }
+}
