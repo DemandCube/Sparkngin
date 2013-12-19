@@ -147,6 +147,7 @@ Feature Todo
 - [ ] Sparkngin/Ambari Monitoring/Ganglia
 - [ ] Sparkngin/Ambari Notification/Nagios
 - [ ] Event Schema Registration - json, avro, thrift protobuffs
+- [ ] Support Json Envelope (NW protocol V2)
 
 
 NW Protocol V1
