@@ -1,0 +1,98 @@
+#
+# zmq2kafka-streamer sample configuration file
+#
+
+
+##
+## ZeroMQ input configuration
+##
+
+# ZeroMQ socket type
+# Must be one of: pull, subscribe
+# Required
+zeromq.socket.type = pull
+
+# ZeroMQ subscription prefix match if zeromq.socket.type = subscribe
+# This is a comma-separated list of strings.
+# Required if zeromq.socket.type = subscribe
+#zeromq.subscribe = myprefix1, myprefix2, escaped\, prefix3
+
+# ZeroMQ connect address
+# Exactly one of zeromq.connect or zeromq.bind must be configured.
+zeromq.connect = tcp://localhost:5555
+
+# ZeroMQ bind address
+# Exactly one of zeromq.connect or zeromq.bind must be configured.
+#zeromq.bind = tcp://*:5555
+
+# ZeroMQ socket identity
+#zeromq.identity = myid
+
+# Comma-separated list of subjects to subscribe to when zeromq.socket.type = sub
+#zeromq.subscribe = test1,mysub1,sub2,,,includes \,\, stuff,  sub3 , sub4 
+
+
+
+
+##
+## Kafka output configuration
+##
+
+# Set Apache Kafka topic to produce messages to.
+# Required
+kafka.topic = mytopic
+
+# Set Apache Kafka partition to produce messages to.
+# If set to -1 the random partitioner will be used to evenly
+# distribute messages over all available partitions for the topic.
+# Default: -1
+kafka.partition = 0
+
+# Comma-separated initial list of Apache Kafka brokers (bootstrap brokers).
+# The full set of brokers will be learnt automatically by quering the
+# bootstrap brokers.
+# Required
+kafka.metadata.broker.list = broker1.foo.com
+
+# Any configuration property prefixed with "kafka." or "kafka.topic."
+# (except for kafka.topic and kafka.partition) will be handled by
+# librdkafka.
+#
+# See librdkafka CONFIGURATION.md for all available configuration options:
+# https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
+#
+# Global configuration properties are prefixed with "kafka.",
+# while topic configuration properties are prefixed with "kafka.topic.".
+#
+# I.e.:
+# Maximum number of produce messages to queue locally awaiting delivery.
+#kafka.queue.buffering.max.messages = 1000000
+#
+# Required number of acks when producing messages.
+#kafka.topic.required.acks = 1
+
+
+
+
+
+##
+## Generic configuration
+##
+
+
+# Daemonize (background) zmq2kafka-streamer
+# Can be disabled by -D command-line switch.
+# Default: true
+daemonize = false
+
+# Log level (1 (Emergency) .. 7 (Debug))
+# See syslog(3) for details.
+# Debugging (7) can be enabled by -d command-line switch.
+# Default: 6 (Info)
+#log.level = 7
+
+
+# Log Kafka delivery errors
+# Default: true
+#log.kafka.msg.error = false
+
