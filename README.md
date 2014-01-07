@@ -160,6 +160,7 @@ Purpose is to provide standard event data that is used to allow for systematic m
 - version
 - submitted timestamp
 
+
 Model Project to Eval
 ====
 - <https://github.com/FRiCKLE/ngx_zeromq>
@@ -262,7 +263,6 @@ e.g. /log?level=info&type=http&stimestamp=134545634345&ver=1.0&topic=test&env=te
 - referrer
 - user agent
 - data which is parsed from cookie
-
 
 
 
