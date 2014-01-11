@@ -8,8 +8,7 @@ Sparkngin is a high-performance persistent message stream engine built on Nginx.
 
 The Problem
 ======
-The core problem is how to stream data from a rest calls (an endpoint) and send it through a horizonatally scalable HA high-performance way that 
-allows for the delivery of messages to an end system like (Kafka, Storm, HDFS ...)
+The core problem is how to stream data from rest calls (an endpoint) and send (messages, events, logs) to an end system like (Kafka, Kinesis, Storm, HDFS ...).  We want this to be horizonatally scalable HA and high-performance way that allows for reliable  delivery of messages.
 
 Features
 ======
