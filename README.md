@@ -26,6 +26,9 @@ Out of the box includes:
 Table of Contents
 - TODO
 
+Install/Developer Setup
+======
+- [Instructions Developer Setup](https://github.com/DemandCube/Sparkngin-developer-setup)
 
 Community
 ======
