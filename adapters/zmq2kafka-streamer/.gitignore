@@ -1,0 +1,7 @@
+zmq2kafka-streamer
+*.o
+*.d
+*~
+\#*
+.\#*
+*.pid
