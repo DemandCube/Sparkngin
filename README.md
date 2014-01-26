@@ -403,7 +403,7 @@ Keep your fork updated
 - Add the remote, call it "upstream":
 
 ```
-git remote add upstream https://github.com/DemandCube/developer-setup.git
+git remote add upstream git@github.com:DemandCube/Sparkngin.git
 ```
 - Fetch all the branches of that remote into remote-tracking branches,
 - such as upstream/master:
