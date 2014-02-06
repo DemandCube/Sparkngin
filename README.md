@@ -29,6 +29,8 @@ Use-Cases
 ======
 - Distributed log ingestion to HDFS
 - Distributed event collection
+- Event Aggregation
+- Scalable data ingestion
 
 Table of Contents
 - TODO
