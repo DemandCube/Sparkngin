@@ -25,6 +25,11 @@ Out of the box includes:
 - Monitoring with Ganglia
 - Heart Alerting with Nagios
 
+Use-Cases
+======
+- Distributed log ingestion to HDFS
+- Distributed event collection
+
 Table of Contents
 - TODO
 
