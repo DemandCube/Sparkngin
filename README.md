@@ -92,6 +92,10 @@ $ patch -p0 < SPARKNGIN-1234-0.patch # When using git diff --no-prefix
   * [Find issues with label "Patch Available"](https://github.com/DemandCube/Sparkngin/issues?labels=patch+avaliable&page=1&state=open), look over and give your feedback in the issue as necessary.  If there are questions discuss in the [Mailing List](https://groups.google.com/forum/#!forum/sparkngin).
 
 
+1. Pull Request
+TODO: add in documentation on how todo this.
+https://help.github.com/articles/merging-a-pull-request
+
 ## Git Workflow
   * [Suggested Git Workflows](https://cwiki.apache.org/confluence/display/KAFKA/Git+Workflow)
 
