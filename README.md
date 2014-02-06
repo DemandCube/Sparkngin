@@ -6,7 +6,7 @@ Nginx + ZeroMQ = Awesome!
 
 Sparkngin is a high-performance persistent message stream engine built on Nginx.   Sparkngin can function as logging, event or message streaming solution.  When used with Neverwinter Data Platform Sparkngin can stream data to data repositories like Hive, Hbase, Storm and HDFS.
 
-- This is part of [NeverwinterDP](https://github.com/DemandCube/NeverwinterDP)
+- This is part of [NeverwinterDP the Data Pipeline for Hadoop](https://github.com/DemandCube/NeverwinterDP)
 
 The Problem
 ======
