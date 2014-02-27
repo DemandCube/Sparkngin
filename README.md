@@ -57,6 +57,20 @@ There are many ways you can contribute towards the project. A few of these are:
 
 **Provide Patches**: We encourage you to assign the relevant [GitHub Issue](https://github.com/DemandCube/Sparkngin/issues?state=open) to yourself and supply a patch or [pull request](https://github.com/DemandCube/Sparkngin/pulls) for it. The patch you provide can be code, documentation, tests, configs, build changes, or any combination of these.
 
+Workflow
+======
+
+1. **Fork the Repository**
+1. **Create a branch off of master or if you know right branch**
+  * `git branch feature/master/my_contribution master`
+  * `git branch fix/master/my_contribution master`
+  * `git branch issue/master/my_contribution master`
+1. **Then checkout the new branch with** 
+  *  `git	checkout fix/master/my_contribution`
+1. **Do your coding**
+1. **Issue Pull Request(On Github website) to the Main Repo**
+1. **Stop making changes on that branch** 
+
 How to Submit - Patches/Code
 ======
 
