@@ -42,7 +42,7 @@ Install/Developer Setup
 Community
 ======
 - [Mailing List](https://groups.google.com/forum/#!forum/sparkngin)
-- IRC channel #Sparkngin on irc.freenode.net
+- IRC channel #sparkngin on irc.freenode.net
 
 How to Contribute
 ======
