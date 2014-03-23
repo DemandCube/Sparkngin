@@ -44,9 +44,9 @@ Community
 - [Mailing List](https://groups.google.com/forum/#!forum/sparkngin)
 - IRC channel #sparkngin on irc.freenode.net
 
-How to Contribute
-======
+## Contributing
 
+See the [NeverwinterDP Guide to Contributing] (https://github.com/DemandCube/NeverwinterDP#how-to-contribute)
 
 
 Potential Implementation Strategies
