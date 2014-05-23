@@ -1,0 +1,22 @@
+{
+  "server": { 
+    "host" : "192.168.1.100",
+    "listenPort": 5700,
+    "version": 1.0,
+    "roles": ["sparkngin"],
+    "clusterRPC": "hazelcast",
+    "description": "Sparkngin server configuration"
+  } ,
+
+  "services": [
+    {
+      "serviceId": "SparknginClusterHttpService",
+      "name":  "SparknginClusterHttpService",
+      "className": "com.neverwinterdp.sparkngin.http.SparknginClusterHttpService",
+      "parameters" : {
+        "listenPort": 8080,
+        "forwarder": "com.neverwinterdp.sparkngin.http.DevNullMessageForwarder"
+      }  
+    } 
+  ]
+}
