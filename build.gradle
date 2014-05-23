@@ -1,0 +1,123 @@
+apply plugin: 'java'
+apply plugin: 'eclipse' 
+apply plugin: 'maven' 
+
+archivesBaseName = 'sparkngin'
+
+eclipse {
+  project {
+    name = 'Sparkngin'
+  }
+
+  classpath {
+    downloadSources=true
+  }
+}
+
+eclipse.classpath.defaultOutputDir = file( 'build/classes' )
+
+group = 'com.neverwinterdp'
+sourceCompatibility = 1.7
+version = '1.0-SNAPSHOT'
+configurations.compile.transitive = true
+
+project.ext {
+  kafkaVersion = "0.8.1.1"
+  zookeeperVersion = "3.4.6"
+  jettyVersion = "9.2.0.M0"
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+}
+
+
+dependencies {
+  compile group: 'com.neverwinterdp', name: 'commons.utils', version: '1.0-SNAPSHOT'
+  compile group: 'com.neverwinterdp', name: 'commons.api', version: '1.0-SNAPSHOT'
+  compile group: 'com.neverwinterdp', name: 'commons.cluster', version: '1.0-SNAPSHOT'
+
+  compile group: 'com.neverwinterdp', name: 'queuengin', version: '1.0-SNAPSHOT'
+
+  compile group: 'io.netty', name: 'netty-all', version: '4.0.19.Final'
+
+  compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.5'
+  compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.5'
+
+  testCompile group: 'junit', name: 'junit', version: '4.11'
+
+  testCompile group: 'org.eclipse.jetty', name: 'jetty-server', version: project.jettyVersion
+  testCompile group: 'org.eclipse.jetty', name: 'jetty-webapp', version: project.jettyVersion
+
+  testCompile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3'
+
+  testCompile group: 'com.jcraft', name: 'jzlib', version: '1.1.3'
+
+  testCompile group: 'io.vertx', name: 'vertx-core', version: '2.1RC2'
+  testCompile group: 'io.vertx', name: 'vertx-platform', version: '2.1RC2'
+  testCompile group: 'io.vertx', name: 'testtools', version: '2.0.3-final'
+}
+
+test {
+  forkEvery = 1
+  ignoreFailures = true
+  testLogging.showStandardStreams = true
+
+  filter {
+    includeTestsMatching "*UnitTest"
+  }
+}
+
+task release (dependsOn: 'build') << {
+  def releaseDir = "${buildDir}/release/sparkngin"
+  doRelease(releaseDir) ;
+}
+
+def doRelease(String releaseDir) {
+  println "\n\n"
+  println "*************************************************"
+  println "Preparing the release directory ${releaseDir}"
+  println "*************************************************"
+
+  println "Copy the scripts"
+  copy {
+    from "src/app"
+    into "${releaseDir}"
+  }
+
+  def jars = [ 
+    "lib.common", "test-framework", "queuengin",
+    "jackson-core-asl", "jackson-mapper-asl",
+    "kafka", "scala-library",
+    "netty-all",
+    "log4j", "slf4j-api", "slf4j-log4j12",
+    "metrics-core", "metrics-annotation"
+  ] 
+
+  println "Copy the dependency library"
+  project(':sparkngin').configurations.compile.each { File file -> 
+    if(isIn(jars, file)) {
+      println "  Copy $file.name to sparkngin/libs"
+      copy {
+        from file
+        into "${releaseDir}/libs"
+      }
+    } else {
+      //println "Ignore $file.name "
+    }
+  }
+
+  copy {
+    from "${buildDir}/libs"
+    into "${releaseDir}/libs"
+
+  }
+}
+
+def isIn(set, File file) {
+  for(item in set) {
+    if(file.name.startsWith(item)) return true ;
+  }
+  return false ;
+}
