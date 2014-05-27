@@ -1,34 +1,39 @@
 package com.neverwinterdp.sparkngin.http;
 
-import java.util.Map;
+import org.slf4j.Logger;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import com.neverwinterdp.netty.http.HttpServer;
-import com.neverwinterdp.server.Server;
-import com.neverwinterdp.server.config.ServiceConfig;
 import com.neverwinterdp.server.service.AbstractService;
 import com.neverwinterdp.util.BeanInspector;
 import com.neverwinterdp.util.LoggerFactory;
 
 public class SparknginClusterHttpService extends AbstractService {
+  private LoggerFactory loggerFactory ;
+  private Logger logger ;
   private HttpServer server ;
-  private LoggerFactory loggerFactory  ;
   
-  public void onInit(Server server) {
-    super.onInit(server);
-    loggerFactory = server.getLoggerFactory() ;
+  @Inject(optional = true) @Named("sparkngin.forwarder.class")
+  private String forwarderClass = DevNullMessageForwarder.class.getName() ;
+  
+  @Inject(optional = true) @Named("sparkngin.http-listen-port")
+  private int httpListenPort = 8080;
+  
+  @Inject
+  public void init(LoggerFactory factory) {
+    this.loggerFactory = factory ;
+    logger = factory.getLogger(getClass().getSimpleName()) ;
   }
   
   public void start() throws Exception {
     logger.info("Start start()");
-    ServiceConfig config = getServiceConfig() ;
-    String forawarderCLass = config.getParameter("forwarder", DevNullMessageForwarder.class.getName()) ;
-    Map<String, Object> forwarderProperties = config.getParameter("forwarderProperties", (Map<String, Object>)null) ;
-    Class<?> forwarderType = Class.forName(forawarderCLass) ;
+    Class<?> forwarderType = Class.forName(forwarderClass) ;
     BeanInspector<MessageForwarder> fInspector = new BeanInspector(forwarderType) ;
-    MessageForwarder forwarder = fInspector.newInstance(forwarderProperties) ;
+    MessageForwarder forwarder = fInspector.newInstance() ;
     forwarder.onInit(); 
     server = new HttpServer();
-    server.setPort(config.getParameter("listenPort", 8080)) ;
+    server.setPort(httpListenPort) ;
     server.setLoggerFactory(loggerFactory) ;
     server.add("/message", new MessageRouteHandler(forwarder, 200));
     server.startAsDeamon();
