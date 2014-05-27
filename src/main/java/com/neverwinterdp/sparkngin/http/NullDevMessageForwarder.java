@@ -2,7 +2,7 @@ package com.neverwinterdp.sparkngin.http;
 
 import com.neverwinterdp.message.Message;
 
-public class DevNullMessageForwarder implements MessageForwarder {
+public class NullDevMessageForwarder implements MessageForwarder {
   private int count ;
   
   public void onInit() {
@@ -15,5 +15,8 @@ public class DevNullMessageForwarder implements MessageForwarder {
   
   public void forward(Message message) {
     count++ ;
+    if(count % 100 == 0) {
+      //System.out.println("Receive " + count);
+    }
   }
 }

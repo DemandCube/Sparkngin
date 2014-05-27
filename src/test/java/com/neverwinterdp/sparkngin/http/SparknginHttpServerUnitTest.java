@@ -20,12 +20,12 @@ public class SparknginHttpServerUnitTest {
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
   }
 
-  private DevNullMessageForwarder forwarder ;
+  private NullDevMessageForwarder forwarder ;
   private HttpServer server ;
   
   @Before
   public void setup() throws Exception {
-    forwarder = new DevNullMessageForwarder() ;
+    forwarder = new NullDevMessageForwarder() ;
     server = new HttpServer();
     server.add("/message", new MessageRouteHandler(forwarder, 10));
     server.startAsDeamon();

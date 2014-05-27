@@ -41,6 +41,7 @@ dependencies {
   compile group: 'com.neverwinterdp', name: 'queuengin', version: '1.0-SNAPSHOT'
 
   compile group: 'io.netty', name: 'netty-all', version: '4.0.19.Final'
+  compile group: 'com.jcraft', name: 'jzlib', version: '1.1.3'
 
   compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.5'
   compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.5'
@@ -52,7 +53,6 @@ dependencies {
 
   testCompile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3'
 
-  testCompile group: 'com.jcraft', name: 'jzlib', version: '1.1.3'
 
   testCompile group: 'io.vertx', name: 'vertx-core', version: '2.1RC2'
   testCompile group: 'io.vertx', name: 'vertx-platform', version: '2.1RC2'
@@ -87,16 +87,17 @@ def doRelease(String releaseDir) {
   }
 
   def jars = [ 
-    "lib.common", "test-framework", "queuengin",
-    "jackson-core-asl", "jackson-mapper-asl",
+    "commons.utils", "commons.api", "commons.cluster",
+    "jackson-core-asl", "jackson-mapper-asl", 'jcommander',
+    'guice', 'javax.inject', 'hazelcast', 'aopalliance',
     "kafka", "scala-library",
-    "netty-all",
-    "log4j", "slf4j-api", "slf4j-log4j12",
-    "metrics-core", "metrics-annotation"
+    "netty-all", 'jzlib',
+    "metrics-core", "metrics-annotation",
+    "log4j", "slf4j-api", "slf4j-log4j12"
   ] 
 
   println "Copy the dependency library"
-  project(':sparkngin').configurations.compile.each { File file -> 
+  configurations.compile.each { File file -> 
     if(isIn(jars, file)) {
       println "  Copy $file.name to sparkngin/libs"
       copy {
@@ -111,7 +112,6 @@ def doRelease(String releaseDir) {
   copy {
     from "${buildDir}/libs"
     into "${releaseDir}/libs"
-
   }
 }
 

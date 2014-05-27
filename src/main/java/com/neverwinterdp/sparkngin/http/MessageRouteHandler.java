@@ -38,10 +38,11 @@ public class MessageRouteHandler extends RouteHandlerGeneric {
       ByteBuf byteBuf = req.content() ;
       byte[] data = new byte[byteBuf.readableBytes()] ;
       byteBuf.readBytes(data) ;
+      byteBuf.release() ;
       Message message = JSONSerializer.INSTANCE.fromBytes(data, Message.class) ;
       forwarderQueue.put(message);
       ack.setStatus(SendAck.Status.OK);
-    } catch(Throwable t) {
+    } catch(Throwable t) { 
       ack.setMessage(t.getMessage());
       ack.setStatus(SendAck.Status.ERROR);
     }
