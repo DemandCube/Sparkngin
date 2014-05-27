@@ -15,10 +15,13 @@ public class SparknginClusterHttpService extends AbstractService {
   private HttpServer server ;
   
   @Inject(optional = true) @Named("sparkngin.forwarder.class")
-  private String forwarderClass = DevNullMessageForwarder.class.getName() ;
+  private String forwarderClass = NullDevMessageForwarder.class.getName() ;
   
   @Inject(optional = true) @Named("sparkngin.http-listen-port")
   private int httpListenPort = 8080;
+  
+  @Inject(optional = true) @Named("sparkngin.queue-buffer")
+  private int queueBuffer = 1000;
   
   @Inject
   public void init(LoggerFactory factory) {
@@ -35,7 +38,7 @@ public class SparknginClusterHttpService extends AbstractService {
     server = new HttpServer();
     server.setPort(httpListenPort) ;
     server.setLoggerFactory(loggerFactory) ;
-    server.add("/message", new MessageRouteHandler(forwarder, 200));
+    server.add("/message", new MessageRouteHandler(forwarder, queueBuffer));
     server.startAsDeamon();
     logger.info("Finish start()");
   }

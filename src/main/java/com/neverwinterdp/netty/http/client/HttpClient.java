@@ -62,7 +62,7 @@ public class HttpClient {
   
   public void close() {
     //Shut down executor threads to exit.
-    //group.shutdownGracefully();
+    group.shutdownGracefully();
     channel.close();
   }
   
@@ -114,8 +114,8 @@ public class HttpClient {
     } else {
       request = 
           new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, uri.toString(), content);
-      // request.headers().set(HttpHeaders.Names.CONTENT_LENGTH, contentBuf.readableBytes());
-      HttpHeaders.setTransferEncodingChunked(request);
+      request.headers().set(HttpHeaders.Names.CONTENT_LENGTH, content.readableBytes());
+      //HttpHeaders.setTransferEncodingChunked(request);
     }
     request.headers().set(HttpHeaders.Names.HOST, host);
     request.headers().set(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.KEEP_ALIVE);
