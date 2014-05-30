@@ -48,7 +48,9 @@ public class SparknginServer {
       properties.put("server.group", "NeverwinterDP") ;
       properties.put("server.cluster-framework", "hazelcast") ;
       properties.put("server.roles", "master") ;
-      properties.put("server.service-module", SparknginHttpServiceModule.class.getName()) ;
+      properties.put("server.available-modules", SparknginHttpServiceModule.class.getName()) ;
+      properties.put("server.install-modules", SparknginHttpServiceModule.class.getName()) ;
+      properties.put("server.install-modules-autostart", "true") ;
       properties.put("sparkngin.sparkngin.http-listen-port", "8080") ;
       properties.put("sparkngin.sparkngin.queue-buffer", "1000") ;
       properties.put("sparkngin.forwarder.class", NullDevMessageForwarder.class.getName()) ;

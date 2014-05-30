@@ -42,7 +42,9 @@ public class SparknginClusterHttpServiceUnitTest {
     zkServerProps.put("server.group", "NeverwinterDP") ;
     zkServerProps.put("server.cluster-framework", "hazelcast") ;
     zkServerProps.put("server.roles", "master") ;
-    zkServerProps.put("server.service-module", ZookeeperServiceModule.class.getName()) ;
+    zkServerProps.put("server.available-modules", ZookeeperServiceModule.class.getName()) ;
+    zkServerProps.put("server.install-modules", ZookeeperServiceModule.class.getName()) ;
+    zkServerProps.put("server.install-modules-autostart", "true") ;
     //zkServerProps.put("zookeeper.config-path", "") ;
     zkServer = Server.create(zkServerProps);
     
@@ -50,7 +52,9 @@ public class SparknginClusterHttpServiceUnitTest {
     kafkaServerProps.put("server.group", "NeverwinterDP") ;
     kafkaServerProps.put("server.cluster-framework", "hazelcast") ;
     kafkaServerProps.put("server.roles", "master") ;
-    kafkaServerProps.put("server.service-module", KafkaServiceModule.class.getName()) ;
+    kafkaServerProps.put("server.available-modules", KafkaServiceModule.class.getName()) ;
+    kafkaServerProps.put("server.install-modules", KafkaServiceModule.class.getName()) ;
+    kafkaServerProps.put("server.install-modules-autostart", "true") ;
     kafkaServerProps.put("kafka.zookeeper-urls", "127.0.0.1:2181") ;
     kafkaServerProps.put("kafka.consumer-report.topics", TOPIC_NAME) ;
     kafkaServer = Server.create(kafkaServerProps);
@@ -59,15 +63,15 @@ public class SparknginClusterHttpServiceUnitTest {
     sparknginServerProps.put("server.group", "NeverwinterDP") ;
     sparknginServerProps.put("server.cluster-framework", "hazelcast") ;
     sparknginServerProps.put("server.roles", "master") ;
-    sparknginServerProps.put("server.service-module", SparknginHttpServiceModule.class.getName()) ;
+    sparknginServerProps.put("server.available-modules", SparknginHttpServiceModule.class.getName()) ;
+    sparknginServerProps.put("server.install-modules", SparknginHttpServiceModule.class.getName()) ;
+    sparknginServerProps.put("server.install-modules-autostart", "true") ;
     sparknginServerProps.put("sparkngin.sparkngin.http-listen-port", "8080") ;
     sparknginServerProps.put("sparkngin.forwarder.class", KafkaMessageForwarder.class.getName()) ;
     sparknginServerProps.put("sparkngin.forwarder.kafka-broker-list", "127.0.0.1:9092") ;
     sparknginServer = Server.create(sparknginServerProps);
     
-    ClusterMember member = sparknginServer.getClusterService().getMember() ;
-    String connectUrl = member.getIpAddress() + ":" + member.getPort() ;
-    clusterClient = new HazelcastClusterClient(connectUrl) ;
+    clusterClient = new HazelcastClusterClient() ;
     
     //Wait to make sure all the servervices are launched
     Thread.sleep(2000) ;
