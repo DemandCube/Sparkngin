@@ -98,15 +98,7 @@ public class HttpServer {
   }
   
   public void startAsDeamon() {
-    deamonThread = new Thread() {
-      public void run() {
-        try {
-          HttpServer.this.start() ;
-        } catch (Exception e) {
-          logger.error("HttpServer deamon thread has problem.", e);
-        }
-      }
-    };
+    deamonThread = new DeamonThread(this) ;
     deamonThread.start() ; 
   }
 
@@ -116,5 +108,21 @@ public class HttpServer {
     //workerGroup.shutdownGracefully();
     channel.close();
     logger.info("Finish shutdown()");
+  }
+  
+  static public class DeamonThread extends Thread {
+    HttpServer instance ;
+    
+    DeamonThread(HttpServer instance) {
+      this.instance = instance ;
+    }
+    
+    public void run() {
+      try {
+        instance.start();
+      } catch (Exception e) {
+        instance.logger.error("HttpServer deamon thread has problem.", e);
+      }
+    }
   }
 }
