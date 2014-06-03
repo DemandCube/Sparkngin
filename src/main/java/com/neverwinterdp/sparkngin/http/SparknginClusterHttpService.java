@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.neverwinterdp.netty.http.HttpServer;
+import com.neverwinterdp.server.module.ModuleProperties;
 import com.neverwinterdp.server.service.AbstractService;
 import com.neverwinterdp.util.BeanInspector;
 import com.neverwinterdp.util.LoggerFactory;
@@ -14,14 +15,21 @@ public class SparknginClusterHttpService extends AbstractService {
   private Logger logger ;
   private HttpServer server ;
   
-  @Inject(optional = true) @Named("sparkngin.forwarder.class")
+  @Inject
+  private ModuleProperties moduleProperties; 
+  
+  @Inject(optional = true) @Named("forwarder-class")
   private String forwarderClass = NullDevMessageForwarder.class.getName() ;
   
-  @Inject(optional = true) @Named("sparkngin.http-listen-port")
+  @Inject(optional = true) @Named("http-listen-port")
   private int httpListenPort = 8080;
   
-  @Inject(optional = true) @Named("sparkngin.queue-buffer")
+  @Inject(optional = true) @Named("queue-buffer")
   private int queueBuffer = 1000;
+  
+  public SparknginClusterHttpService() {
+    new Exception().printStackTrace();
+  }
   
   @Inject
   public void init(LoggerFactory factory) {
@@ -30,7 +38,7 @@ public class SparknginClusterHttpService extends AbstractService {
   }
   
   public void start() throws Exception {
-    logger.info("Start start()");
+    logger.info("Start start() hashcode = " + hashCode());
     Class<?> forwarderType = Class.forName(forwarderClass) ;
     BeanInspector<MessageForwarder> fInspector = new BeanInspector(forwarderType) ;
     MessageForwarder forwarder = fInspector.newInstance() ;
@@ -44,7 +52,7 @@ public class SparknginClusterHttpService extends AbstractService {
   }
 
   public void stop() {
-    logger.info("Start stop()");
+    logger.info("Start stop() hashcode = " + hashCode());
     server.shutdown();
     logger.info("Finish stop()");
   }

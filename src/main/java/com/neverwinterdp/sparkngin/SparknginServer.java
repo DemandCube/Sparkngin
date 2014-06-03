@@ -5,9 +5,9 @@ import java.util.Properties;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.neverwinterdp.server.Server;
+import com.neverwinterdp.server.module.SparknginModule;
 import com.neverwinterdp.sparkngin.http.NullDevMessageForwarder;
 import com.neverwinterdp.sparkngin.http.KafkaMessageForwarder;
-import com.neverwinterdp.sparkngin.http.SparknginHttpServiceModule;
 import com.neverwinterdp.util.IOUtil;
 
 public class SparknginServer {
@@ -48,7 +48,10 @@ public class SparknginServer {
       properties.put("server.group", "NeverwinterDP") ;
       properties.put("server.cluster-framework", "hazelcast") ;
       properties.put("server.roles", "master") ;
-      properties.put("server.service-module", SparknginHttpServiceModule.class.getName()) ;
+      properties.put("server.available-modules", SparknginModule.class.getName()) ;
+      properties.put("server.install-modules", SparknginModule.class.getName()) ;
+      properties.put("server.install-modules-autostart", "true") ;
+      
       properties.put("sparkngin.sparkngin.http-listen-port", "8080") ;
       properties.put("sparkngin.sparkngin.queue-buffer", "1000") ;
       properties.put("sparkngin.forwarder.class", NullDevMessageForwarder.class.getName()) ;
@@ -66,7 +69,7 @@ public class SparknginServer {
       properties.put("sparkngin.forwarder.kafka-broker-list", options.kafkaConnect) ;
     }
     
-    Server server = Server.create(properties);
+    //Server server = Server.create(properties);
     Thread.currentThread().join();
   }
 }
