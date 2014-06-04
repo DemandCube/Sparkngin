@@ -27,10 +27,6 @@ public class SparknginClusterHttpService extends AbstractService {
   @Inject(optional = true) @Named("queue-buffer")
   private int queueBuffer = 1000;
   
-  public SparknginClusterHttpService() {
-    new Exception().printStackTrace();
-  }
-  
   @Inject
   public void init(LoggerFactory factory) {
     this.loggerFactory = factory ;
