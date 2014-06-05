@@ -28,8 +28,11 @@ public class MessageForwarderQueue {
               forwarder.forward(holder.get(i));
             }
           }
+        } catch(InterruptedException ex) {
         } catch (Exception e) {
           e.printStackTrace();
+        } finally {
+          forwarder.onDestroy();
         }
       }
     };
@@ -40,5 +43,9 @@ public class MessageForwarderQueue {
   
   public void put(Message message) throws InterruptedException {
     queue.put(message) ;
+  }
+  
+  public void close() {
+    forwarderThread.interrupt() ; 
   }
 }

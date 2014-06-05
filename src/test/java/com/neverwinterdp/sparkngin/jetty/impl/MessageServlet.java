@@ -14,6 +14,8 @@ import com.neverwinterdp.queuengin.kafka.KafkaMessageProducer;
 import com.neverwinterdp.sparkngin.SendAck;
 import com.neverwinterdp.util.IOUtil;
 import com.neverwinterdp.util.JSONSerializer;
+import com.neverwinterdp.util.monitor.ApplicationMonitor;
+import com.neverwinterdp.util.monitor.ComponentMonitor;
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
@@ -24,7 +26,9 @@ public class MessageServlet extends HttpServlet {
   public void init(ServletConfig config) throws ServletException {
     super.init(config) ;
     String kafkaConnectionUrls = "127.0.0.1:9090,127.0.0.1:9091" ; 
-    producer = new KafkaMessageProducer(kafkaConnectionUrls) ;
+    ApplicationMonitor appMonitor = new ApplicationMonitor() ;
+    ComponentMonitor monitor = appMonitor.createComponentMonitor(KafkaMessageProducer.class) ;
+    producer = new KafkaMessageProducer(monitor, kafkaConnectionUrls) ;
   }
   
   protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

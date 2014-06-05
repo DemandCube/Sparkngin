@@ -10,6 +10,8 @@ import com.neverwinterdp.message.Message;
 import com.neverwinterdp.queuengin.kafka.KafkaMessageProducer;
 import com.neverwinterdp.sparkngin.SendAck;
 import com.neverwinterdp.util.JSONSerializer;
+import com.neverwinterdp.util.monitor.ApplicationMonitor;
+import com.neverwinterdp.util.monitor.ComponentMonitor;
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
@@ -20,8 +22,9 @@ public class MessageHandlers  {
   public void configure(RouteMatcher matcher, JsonObject config) {
     String brokerList = config.getString("broker-list") ;
     if(brokerList == null) brokerList = "127.0.0.1:9090,127.0.0.1:9091" ;
-    
-    producer = new KafkaMessageProducer(brokerList) ;
+    ApplicationMonitor appMonitor = new ApplicationMonitor() ;
+    ComponentMonitor monitor = appMonitor.createComponentMonitor(KafkaMessageProducer.class) ;
+    producer = new KafkaMessageProducer(monitor, brokerList) ;
     matcher.post("/message/:topic", new Post()) ;
   }
   

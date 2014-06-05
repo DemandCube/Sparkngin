@@ -88,7 +88,7 @@ def doRelease(String releaseDir) {
 
   def jars = [ 
     "commons.utils", "commons.api", "commons.cluster",
-    "jackson-core-asl", "jackson-mapper-asl", 'jcommander', "reflections", "guava", "javassist",
+    "jackson-core", "jackson-databind", 'jcommander', "reflections", "guava", "javassist",
     'guice', 'javax.inject', 'hazelcast', 'aopalliance',
     "kafka", "scala-library",
     "netty-all", 'jzlib',
