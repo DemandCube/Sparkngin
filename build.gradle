@@ -87,12 +87,13 @@ def doRelease(String releaseDir) {
   }
 
   def jars = [ 
-    "commons.utils", "commons.api", "commons.cluster",
-    "jackson-core", "jackson-databind", 'jcommander', "reflections", "guava", "javassist",
+    "commons.utils", "commons.api", "commons.cluster", "queuengin",
+    "jackson-core-2.2.2", "jackson-databind", "jackson-annotations", "jcommander", "reflections", "guava", "javassist",
     'guice', 'javax.inject', 'hazelcast', 'aopalliance',
     "kafka", "scala-library",
+    'zookeeper', 'zkclient',
     "netty-all", 'jzlib',
-    "metrics-core", "metrics-annotation",
+    "metrics-core", "metrics-json", "metrics-annotation",
     "log4j", "slf4j-api", "slf4j-log4j12"
   ] 
 

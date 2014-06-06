@@ -33,6 +33,9 @@ module install \
 :echo "=======================================--"
 server registration
 
+:sleep 1000
+
+sparkngin hello -num-message 10000
 
 :echo "Uninstall Sparkngin module on the sparkngin role servers"
 :echo "================================================"
