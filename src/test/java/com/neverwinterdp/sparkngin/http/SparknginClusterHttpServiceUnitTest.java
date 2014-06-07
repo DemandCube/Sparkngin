@@ -70,24 +70,24 @@ public class SparknginClusterHttpServiceUnitTest {
     String installScript =
         "module install " + 
         " -Pmodule.data.drop=true" +
-        " --member-role zookeeper --autostart Zookeeper \n" +
+        " --member-role zookeeper --autostart --module Zookeeper \n" +
         
         "module install " +
         " -Pmodule.data.drop=true" +
         " -Pkafka.zookeeper-urls=127.0.0.1:2181" +
         " -Pkafka.consumer-report.topics=" + TOPIC_NAME +
-        "  --member-role kafka --autostart Kafka \n" +
+        "  --member-role kafka --autostart --module Kafka \n" +
         
-        "module install --member-role sparkngin --autostart Sparkngin \n" ;
+        "module install --member-role sparkngin --autostart --module Sparkngin \n" ;
     shell.executeScript(installScript);
     Thread.sleep(1000);
   }
   
   void uninstall() {
     String uninstallScript = 
-        "module uninstall --member-role sparkngin --timeout 20000 Sparkngin \n" +
-        "module uninstall --member-role kafkar --timeout 20000 Kafka \n" +
-        "module uninstall --member-role zookeeper --timeout 20000 Zookeeper";
+        "module uninstall --member-role sparkngin --timeout 20000 --module Sparkngin \n" +
+        "module uninstall --member-role kafkar --timeout 20000 --module Kafka \n" +
+        "module uninstall --member-role zookeeper --timeout 20000 --module Zookeeper";
     shell.executeScript(uninstallScript);
   }
 }
