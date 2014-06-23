@@ -9,7 +9,7 @@ import com.neverwinterdp.sparkngin.http.SparknginClusterHttpService;
 public class SparknginModule extends ServiceModule {
   
   protected void configure(Map<String, String> properties) {  
-    bind("SparknginClusterHttoService", SparknginClusterHttpService.class) ;
+    bind("SparknginClusterHttpService", SparknginClusterHttpService.class) ;
   }
 
 }

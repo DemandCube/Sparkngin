@@ -11,6 +11,7 @@ import com.neverwinterdp.message.SampleEvent;
 import com.neverwinterdp.netty.http.HttpServer;
 import com.neverwinterdp.netty.http.client.DumpResponseHandler;
 import com.neverwinterdp.netty.http.client.HttpClient;
+import com.neverwinterdp.util.monitor.ApplicationMonitor;
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
@@ -26,10 +27,11 @@ public class SparknginHttpServerUnitTest {
   @Before
   public void setup() throws Exception {
     forwarder = new NullDevMessageForwarder() ;
-    server = new HttpServer();
-    server.add("/message", new MessageRouteHandler(forwarder, 10));
-    server.startAsDeamon();
-    Thread.sleep(2000);
+    server = new HttpServer() ;
+    ApplicationMonitor appMonitor = new ApplicationMonitor() ;
+    server.add("/message", new MessageRouteHandler(appMonitor, forwarder, 10)) ;
+    server.startAsDeamon() ;
+    Thread.sleep(2000) ;
   }
   
   @After
