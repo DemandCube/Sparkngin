@@ -20,6 +20,7 @@ import com.neverwinterdp.message.Message;
 import com.neverwinterdp.netty.http.route.RouteHandlerGeneric;
 import com.neverwinterdp.sparkngin.SendAck;
 import com.neverwinterdp.util.JSONSerializer;
+import com.neverwinterdp.util.monitor.ApplicationMonitor;
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
@@ -27,8 +28,8 @@ import com.neverwinterdp.util.JSONSerializer;
 public class MessageRouteHandler extends RouteHandlerGeneric {
   private MessageForwarderQueue forwarderQueue ;
   
-  public MessageRouteHandler(MessageForwarder forwarder, int queueSize) {
-    forwarderQueue = new MessageForwarderQueue(forwarder, queueSize) ;
+  public MessageRouteHandler(ApplicationMonitor appMonitor, MessageForwarder forwarder, int queueSize) {
+    forwarderQueue = new MessageForwarderQueue(appMonitor, forwarder, queueSize) ;
   }
   
   protected void doPost(ChannelHandlerContext ctx, HttpRequest httpReq) {

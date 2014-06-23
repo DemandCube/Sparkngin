@@ -9,6 +9,7 @@ import com.neverwinterdp.server.module.ModuleProperties;
 import com.neverwinterdp.server.service.AbstractService;
 import com.neverwinterdp.util.BeanInspector;
 import com.neverwinterdp.util.LoggerFactory;
+import com.neverwinterdp.util.monitor.ApplicationMonitor;
 
 public class SparknginClusterHttpService extends AbstractService {
   private LoggerFactory loggerFactory ;
@@ -17,6 +18,9 @@ public class SparknginClusterHttpService extends AbstractService {
   
   @Inject
   private ModuleProperties moduleProperties; 
+  
+  @Inject
+  private ApplicationMonitor appMonitor ;
   
   @Inject(optional = true) @Named("forwarder-class")
   private String forwarderClass = NullDevMessageForwarder.class.getName() ;
@@ -34,7 +38,10 @@ public class SparknginClusterHttpService extends AbstractService {
   }
   
   public void start() throws Exception {
-    logger.info("Start start() hashcode = " + hashCode());
+    logger.info("Start start()");
+    logger.info("http-listen-port = " + httpListenPort) ;
+    logger.info("forwarder-class = " + forwarderClass) ;
+    logger.info("queue buffer = " + queueBuffer) ;
     Class<?> forwarderType = Class.forName(forwarderClass) ;
     BeanInspector<MessageForwarder> fInspector = new BeanInspector(forwarderType) ;
     MessageForwarder forwarder = fInspector.newInstance() ;
@@ -42,7 +49,7 @@ public class SparknginClusterHttpService extends AbstractService {
     server = new HttpServer();
     server.setPort(httpListenPort) ;
     server.setLoggerFactory(loggerFactory) ;
-    server.add("/message", new MessageRouteHandler(forwarder, queueBuffer));
+    server.add("/message", new MessageRouteHandler(appMonitor, forwarder, queueBuffer));
     server.startAsDeamon();
     logger.info("Finish start()");
   }
