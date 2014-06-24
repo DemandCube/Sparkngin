@@ -28,8 +28,8 @@ import com.neverwinterdp.util.monitor.ApplicationMonitor;
 public class MessageRouteHandler extends RouteHandlerGeneric {
   private MessageForwarderQueue forwarderQueue ;
   
-  public MessageRouteHandler(ApplicationMonitor appMonitor, MessageForwarder forwarder, int queueSize) {
-    forwarderQueue = new MessageForwarderQueue(appMonitor, forwarder, queueSize) ;
+  public MessageRouteHandler(ApplicationMonitor appMonitor, MessageForwarder forwarder, String queueDir) throws Exception {
+    forwarderQueue = new MessageForwarderQueue(appMonitor, forwarder, queueDir) ;
   }
   
   protected void doPost(ChannelHandlerContext ctx, HttpRequest httpReq) {

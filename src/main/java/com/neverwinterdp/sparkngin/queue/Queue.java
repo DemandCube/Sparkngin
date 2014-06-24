@@ -10,12 +10,14 @@ import com.neverwinterdp.util.FileUtil;
 
 public class Queue<T extends Serializable> {
   private String              storeDir;
-  private QueueConfig         config = new QueueConfig();
   private LinkedList<Segment<T>> segments;
   private Segment<T>             writting ;
+  private long maxSizePerSegment ;
+  private int segmentIndexTracker = 0 ;
   
-  public Queue(String storeDir) throws Exception {
+  public Queue(String storeDir, long maxSizePerSegment) throws Exception {
     this.storeDir = storeDir ;
+    this.maxSizePerSegment = maxSizePerSegment ;
     segments = new LinkedList<Segment<T>>() ;
     if(!FileUtil.exist(storeDir)) {
       FileUtil.mkdirs(storeDir) ;
@@ -26,28 +28,49 @@ public class Queue<T extends Serializable> {
         String fileName = selSegment.getName() ;
         String numString = fileName.substring("segment-".length(), fileName.lastIndexOf('.')) ;
         int segIndex = Integer.parseInt(numString) ;
-        Segment<T> segment = new Segment<T>(storeDir, segIndex) ;
+        Segment<T> segment = new Segment<T>(storeDir, segIndex, maxSizePerSegment) ;
         segments.add(segment) ;
+        if(segmentIndexTracker < segIndex) segmentIndexTracker = segIndex + 1 ;
       }
     }
   }
   
   synchronized public void write(T object) throws Exception {
     if(writting != null && writting.isFull()) {
-      writting.close() ;
-      segments.addLast(writting);
-      writting = null ;
+      newWritingSegment() ;
     }
     if(writting == null) {
-      int nextSegmentIndex = 0 ;
-      if(segments.size() > 0) {
-        Segment<T> lastSegment = segments.getLast() ;
-        nextSegmentIndex = lastSegment.getIndex()  + 1;
-      }
-      writting = new Segment<T>(storeDir, nextSegmentIndex) ;
+      writting = new Segment<T>(storeDir, segmentIndexTracker++, maxSizePerSegment) ;
       writting.open() ;
     }
     writting.append(object) ;
+  }
+  
+  public Segment<T> nextReadSegment(long wait) throws InterruptedException, IOException {
+    if(segments.size() > 0) return segments.getFirst() ;
+    synchronized(segments) {
+      segments.wait(wait) ;
+      newWritingSegment() ;
+      if(segments.size() > 0) return segments.getFirst() ;
+    }
+    return null ;
+  }
+  
+  public void commitReadSegment(Segment<T> segment) throws Exception {
+    synchronized(segments) {
+      segments.remove(segment) ;
+      segment.delete();
+    }
+  }
+  
+  synchronized void newWritingSegment() throws IOException {
+    if(writting == null) return ;
+    writting.close() ;
+    synchronized(segments) {
+      segments.addLast(writting);
+      segments.notifyAll();
+    }
+    writting = null ;
   }
   
   public void close() throws IOException {

@@ -60,7 +60,7 @@ public class SparknginClusterHttpServiceUnitTest {
       message.getHeader().setTopic(TOPIC_NAME);
       client.post("/message", message);
     }
-    Thread.sleep(1000);
+    Thread.sleep(5000);
     client.close();
     assertEquals(NUM_OF_MESSAGES, handler.getCount()) ;
     uninstall(); 
