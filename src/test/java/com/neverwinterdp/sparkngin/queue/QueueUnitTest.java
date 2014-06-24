@@ -7,8 +7,8 @@ import com.neverwinterdp.util.FileUtil;
 public class QueueUnitTest {
   @Test
   public void testQueue() throws Exception {
-    testQueue(10000, 5000) ;
-    testQueue(1000000, 5000) ;
+    testQueue(10000, 10000) ;
+    testQueue(1000000, 10000) ;
   }
   
   
