@@ -1,6 +1,7 @@
 package com.neverwinterdp.sparkngin.http;
 
 import static org.junit.Assert.assertEquals;
+import io.netty.handler.codec.http.LastHttpContent;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -26,7 +27,7 @@ public class SparknginClusterHttpServiceUnitTest {
   
   static protected Server zkServer, kafkaServer, sparknginServer ;
   static protected Shell shell ;
-  static String TOPIC_NAME = "sparkngin" ;
+  static String TOPIC_NAME = "metrics.consumer" ;
     
   @BeforeClass
   static public void setup() throws Exception {
@@ -51,18 +52,17 @@ public class SparknginClusterHttpServiceUnitTest {
   @Test
   public void testSendMessage() throws Exception {
     install() ;
-    int NUM_OF_MESSAGES = 100 ;
-    DumpResponseHandler handler = new DumpResponseHandler() ;
-    HttpClient client = new HttpClient ("127.0.0.1", 8080, handler) ;
+    int NUM_OF_MESSAGES = 10000 ;
+    HttpMessageClient client = new HttpMessageClient ("127.0.0.1", 8080, 300) ;
     for(int i = 0; i < NUM_OF_MESSAGES; i++) {
       SampleEvent event = new SampleEvent("event-" + i, "event " + i) ;
       Message message = new Message("m" + i, event, true) ;
       message.getHeader().setTopic(TOPIC_NAME);
-      client.post("/message", message);
+      client.send(message, 5000);
     }
-    Thread.sleep(5000);
-    client.close();
-    assertEquals(NUM_OF_MESSAGES, handler.getCount()) ;
+    client.waitAndClose(30000);
+    assertEquals(0, client.getErrorCount()) ;
+    shell.execute("server metric");
     uninstall(); 
   }
   
@@ -75,10 +75,11 @@ public class SparknginClusterHttpServiceUnitTest {
         "module install " +
         " -Pmodule.data.drop=true" +
         " -Pkafka.zookeeper-urls=127.0.0.1:2181" +
-        " -Pkafka.consumer-report.topics=" + TOPIC_NAME +
         "  --member-role kafka --autostart --module Kafka \n" +
         
-        "module install --member-role sparkngin --autostart --module Sparkngin \n" ;
+        "module install " + 
+        "  -Pforwarder-class=" + NullDevMessageForwarder.class.getName() +
+        "  --member-role sparkngin --autostart --module Sparkngin \n" ;
     shell.executeScript(installScript);
     Thread.sleep(1000);
   }

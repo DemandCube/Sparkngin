@@ -12,7 +12,6 @@ public class MessageForwarderQueue {
   private Queue<Message> queue ;
   private Thread forwarderThread ;
   private ComponentMonitor monitor ;
-  private int wakeupCount = 0;
   
   public MessageForwarderQueue(ApplicationMonitor appMonitor, MessageForwarder mforwarder, String storeDir) throws Exception {
     this.monitor = appMonitor.createComponentMonitor(getClass()) ;
@@ -22,12 +21,17 @@ public class MessageForwarderQueue {
       public void run() {
         try {
           while(true) {
-            Segment<Message> segment = queue.nextReadSegment(3000l) ;
+            Segment<Message> segment = queue.nextReadSegment(1000l) ;
             if(segment != null) {
+              segment.open(); 
               while(segment.hasNext()) {
-                Timer.Context ctx = monitor.timer("forward(Message)").time() ;
-                forwarder.forward(segment.next());
-                ctx.stop();
+                Timer.Context readCtx = monitor.timer("read(Message)").time() ;
+                Message message = segment.next() ;
+                readCtx.close(); 
+                
+                Timer.Context forwardCtx = monitor.timer("forward(Message)").time() ;
+                forwarder.forward(message);
+                forwardCtx.close();
               }
               queue.commitReadSegment(segment);
             }

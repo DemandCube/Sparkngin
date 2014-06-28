@@ -8,8 +8,14 @@ public class SendAck {
     OK, ERROR, NOT_AVAIBLE
   }
 
+  private Object messageId ;
   private Status status;
   private String message;
+
+  public Object getMessageId() { return messageId; }
+  public void setMessageId(Object objectId) {
+    this.messageId = objectId;
+  }
 
   public Status getStatus() {
     return status;

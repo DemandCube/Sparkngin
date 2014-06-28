@@ -10,7 +10,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpContentCompressor;
+import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpServerCodec;
 
 import org.slf4j.Logger;
@@ -69,16 +72,27 @@ public class HttpServer {
       setDefault(new NotFoundRouteHandler()) ;
     }
     bossGroup = new NioEventLoopGroup(1);
-    workerGroup = new NioEventLoopGroup();
+    workerGroup = new NioEventLoopGroup(3);
     try {
       ServerBootstrap b = new ServerBootstrap();
+      //b.childOption(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, 32 * 1024);
+      //b.childOption(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, 8 * 1024);
+      //b.childOption(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(16 * 1024 * 1024));
       ChannelInitializer<SocketChannel> initializer = new ChannelInitializer<SocketChannel>() {
         public void initChannel(SocketChannel ch) throws Exception {
           ChannelPipeline p = ch.pipeline();
           p.addLast("codec", new HttpServerCodec());
-          // Remove the following line if you don't want automatic content
-          // compression.
-          p.addLast("deflater", new HttpContentCompressor());
+         
+//          // Decodes ChannelBuffer into HTTP Request message
+//          p.addLast("decoder", new HttpRequestDecoder());
+//          // Encodes HTTTPRequest message to ChannelBuffer
+//          p.addLast("encoder", new HttpResponseEncoder());
+         
+          //Remove the following line if you don't want automatic content compression.
+          //p.addLast("deflater", new HttpContentCompressor());
+          //handle automatic content decompression.
+          //p.addLast("inflater", new HttpContentDecompressor());
+          
           p.addLast("aggregator", new HttpObjectAggregator(1048576));
           p.addLast("handler", new HttpServerHandler(HttpServer.this));
         }

@@ -6,14 +6,17 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.FixedRecvByteBufAllocator;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultFullHttpRequest;
 import io.netty.handler.codec.http.HttpClientCodec;
+import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpMethod;
@@ -43,8 +46,12 @@ public class HttpClient {
         ChannelPipeline p = ch.pipeline();
         //p.addLast("log", new LoggingHandler(LogLevel.INFO));
         p.addLast("codec", new HttpClientCodec());
+        
+        // Remove the following line if you don't want automatic content compression.
+        //p.addLast("deflater", new HttpContentCompressor());
         //handle automatic content decompression.
         p.addLast("inflater", new HttpContentDecompressor());
+        
         //handle HttpChunks.
         p.addLast("aggregator", new HttpObjectAggregator(1048576));
         p.addLast("handler", new HttpClientHandler(handler));
@@ -53,11 +60,16 @@ public class HttpClient {
     
     group = new NioEventLoopGroup();
     Bootstrap b = new Bootstrap();
+    //b.option(ChannelOption.WRITE_BUFFER_HIGH_WATER_MARK, 32 * 1024);
+    //b.option(ChannelOption.WRITE_BUFFER_LOW_WATER_MARK, 8 * 1024);
+    //b.option(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(16 * 1024 * 1024));
     b.group(group).
       channel(NioSocketChannel.class).
       handler(initializer);
+   
     // Make the connection attempt.
     channel = b.connect(host, port).sync().channel();
+    System.out.println("http client connection" + channel.localAddress()) ;
   }
   
   public void close() {
@@ -77,12 +89,6 @@ public class HttpClient {
     channel.writeAndFlush(request) ;
   }
   
-  public void post(String uriString, ByteBuf content) throws Exception {
-    URI uri = new URI(uriString);
-    DefaultFullHttpRequest request = createRequest(uri, HttpMethod.POST, content) ;
-    channel.writeAndFlush(request) ;
-  }
-  
   public void post(String uriString, String data) throws Exception {
     ByteBuf content = Unpooled.wrappedBuffer(data.getBytes()) ;
     post(uriString, content) ;
@@ -98,6 +104,14 @@ public class HttpClient {
     ByteBuf content = Unpooled.wrappedBuffer(data) ;
     post(uriString, content) ;
   }
+  
+  public void post(String uriString, ByteBuf content) throws Exception {
+    URI uri = new URI(uriString);
+    DefaultFullHttpRequest request = createRequest(uri, HttpMethod.POST, content) ;
+    channel.writeAndFlush(request) ;
+  }
+  
+  public void flush() { channel.flush() ; }
   
   DefaultFullHttpRequest createRequest(URI uri, HttpMethod method, ByteBuf content) {
    // Prepare the HTTP request.

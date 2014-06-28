@@ -13,6 +13,10 @@ public class NullDevMessageForwarder implements MessageForwarder {
   
   public int getProcessCount() { return count ; }
   
+  public void reset() { 
+    count = 0 ; 
+  }
+  
   public void forward(Message message) {
     count++ ;
     if(count % 100 == 0) {

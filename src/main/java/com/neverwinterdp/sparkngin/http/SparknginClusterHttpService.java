@@ -3,6 +3,7 @@ package com.neverwinterdp.sparkngin.http;
 import org.slf4j.Logger;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.name.Named;
 import com.neverwinterdp.netty.http.HttpServer;
 import com.neverwinterdp.server.module.ModuleProperties;
@@ -22,8 +23,7 @@ public class SparknginClusterHttpService extends AbstractService {
   @Inject
   private ApplicationMonitor appMonitor ;
   
-  @Inject(optional = true) @Named("forwarder-class")
-  private String forwarderClass = NullDevMessageForwarder.class.getName() ;
+  private MessageForwarder messageForwarder ;
   
   @Inject(optional = true) @Named("http-listen-port")
   private int httpListenPort = 8080;
@@ -34,21 +34,24 @@ public class SparknginClusterHttpService extends AbstractService {
     logger = factory.getLogger(getClass().getSimpleName()) ;
   }
   
+  @Inject
+  public void init(Injector container, @Named("forwarder-class") String forwarderClass) throws Exception {
+    Class<MessageForwarder> type = (Class<MessageForwarder>) Class.forName(forwarderClass) ;
+    messageForwarder = container.getInstance(type) ;
+    messageForwarder.onInit() ;
+  }
+  
   public void start() throws Exception {
     logger.info("Start start()");
     logger.info("http-listen-port = " + httpListenPort) ;
-    logger.info("forwarder-class = " + forwarderClass) ;
+    logger.info("forwarder-class = " + messageForwarder.getClass()) ;
     String queueDir = moduleProperties.getDataDir() + "/sparkngin/queue" ;
     logger.info("queue dir = " + queueDir) ;
     
-    Class<?> forwarderType = Class.forName(forwarderClass) ;
-    BeanInspector<MessageForwarder> fInspector = new BeanInspector(forwarderType) ;
-    MessageForwarder forwarder = fInspector.newInstance() ;
-    forwarder.onInit(); 
     server = new HttpServer();
     server.setPort(httpListenPort) ;
     server.setLoggerFactory(loggerFactory) ;
-    server.add("/message", new MessageRouteHandler(appMonitor, forwarder, queueDir));
+    server.add("/message", new MessageRouteHandler(appMonitor, messageForwarder, queueDir));
     server.startAsDeamon();
     logger.info("Finish start()");
   }

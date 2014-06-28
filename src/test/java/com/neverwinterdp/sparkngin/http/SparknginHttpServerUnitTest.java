@@ -24,13 +24,14 @@ public class SparknginHttpServerUnitTest {
 
   private NullDevMessageForwarder forwarder ;
   private HttpServer server ;
+  private ApplicationMonitor appMonitor  ;
   
   @Before
   public void setup() throws Exception {
     FileUtil.removeIfExist("build/queue", false) ;
     forwarder = new NullDevMessageForwarder() ;
     server = new HttpServer() ;
-    ApplicationMonitor appMonitor = new ApplicationMonitor() ;
+    appMonitor = new ApplicationMonitor() ;
     server.add("/message", new MessageRouteHandler(appMonitor, forwarder, "build/queue/data")) ;
     server.startAsDeamon() ;
     Thread.sleep(2000) ;
@@ -43,7 +44,7 @@ public class SparknginHttpServerUnitTest {
   
   @Test
   public void testSendMessage() throws Exception {
-    int NUM_OF_MESSAGES = 150 ;
+    int NUM_OF_MESSAGES = 5 ;
     DumpResponseHandler handler = new DumpResponseHandler() ;
     HttpClient client = new HttpClient ("127.0.0.1", 8080, handler) ;
     for(int i = 0; i < NUM_OF_MESSAGES; i++) {
@@ -51,7 +52,11 @@ public class SparknginHttpServerUnitTest {
       Message message = new Message("m" + i, event, true) ;
       client.post("/message", message);
     }
-    Thread.sleep(5000);
+    long stopTime = System.currentTimeMillis() + 10000 ;
+    while(System.currentTimeMillis() < stopTime && 
+          forwarder.getProcessCount() != NUM_OF_MESSAGES) {
+      Thread.sleep(100);
+    }
     client.close() ;
     assertEquals(NUM_OF_MESSAGES, handler.getCount()) ;
     assertEquals(NUM_OF_MESSAGES, forwarder.getProcessCount()) ;
