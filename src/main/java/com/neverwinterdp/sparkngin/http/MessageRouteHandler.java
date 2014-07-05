@@ -1,20 +1,9 @@
 package com.neverwinterdp.sparkngin.http;
 
-import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONNECTION;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH;
-import static io.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpHeaders.Values;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpVersion;
 
 import com.codahale.metrics.Timer;
 import com.neverwinterdp.message.Message;
@@ -56,28 +45,8 @@ public class MessageRouteHandler extends RouteHandlerGeneric {
     }
     
     Timer.Context writeOkCtx = monitor.timer("writeOk()").time() ;
-    writeOK(ctx, httpReq, ack, "application/json") ;
+    writeJSON(ctx, httpReq, ack) ;
     writeOkCtx.stop() ;
-    
     doPostCtx.stop() ;
-  }
-  
-  protected <T> void writeOK(ChannelHandlerContext ctx, HttpRequest req, T obj, String contentType) {
-    byte[] data = JSONSerializer.INSTANCE.toBytes(obj) ;
-    ByteBuf content = Unpooled.wrappedBuffer(data) ;
-    writeOK(ctx, req, content, contentType) ;
-  }
-  
-  protected void writeOK(ChannelHandlerContext ctx, HttpRequest req, ByteBuf content, String contentType) {
-    FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, OK, content);
-    response.headers().set(CONTENT_TYPE, contentType);
-    response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
-    response.headers().set(HttpHeaders.Names.ACCEPT_ENCODING, HttpHeaders.Values.GZIP);
-    if(isKeepAlive(req)) {
-      response.headers().set(CONNECTION, Values.KEEP_ALIVE);
-    }
-    Timer.Context timeCtx = monitor.timer("writeAndFlush()").time() ;
-    ctx.writeAndFlush(response);
-    timeCtx.stop() ;
   }
 }
