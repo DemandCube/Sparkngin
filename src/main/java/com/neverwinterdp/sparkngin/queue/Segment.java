@@ -12,7 +12,7 @@ import net.openhft.chronicle.tools.ChronicleTools;
 import com.neverwinterdp.util.IOUtil;
 
 public class Segment<T extends Serializable> {
-//16 billion max, or one per day for 11 years.
+  //16 billion max, or one per day for 11 years.
   public static final ChronicleConfig TINY = new ChronicleConfig(1 * 1024, 2 * 1024 * 1024, true, 4 * 1024 * 1024);
   
   private IndexedChronicle chronicle ;
