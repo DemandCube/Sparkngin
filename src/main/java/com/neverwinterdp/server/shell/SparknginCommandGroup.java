@@ -1,21 +1,19 @@
 package com.neverwinterdp.server.shell;
 
-import com.beust.jcommander.Parameters;
-import com.beust.jcommander.ParametersDelegate;
+import com.neverwinterdp.server.gateway.Command;
 
-@CommandGroupConfig(name = "sparkngin")
-public class SparknginCommandGroup extends CommandGroup {
+@ShellCommandConfig(name = "sparkngin")
+public class SparknginCommandGroup extends ShellCommand {
   public SparknginCommandGroup() {
     add("hello", HelloSparknginCommand.class);
   }
   
-  @Parameters(commandDescription = "execute sparkngin hello command")
-  static public class HelloSparknginCommand extends Command {
-    @ParametersDelegate
+  static public class HelloSparknginCommand extends ShellSubCommand {
     HelloSparkngin.Options options = new HelloSparkngin.Options();
     
-    public void execute(ShellContext ctx) {
+    public void execute(ShellContext ctx, Command command) {
       try {
+        command.mapAll(options);
         new HelloSparkngin().run(options);
       } catch (Exception e) {
         e.printStackTrace();

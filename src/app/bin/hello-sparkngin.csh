@@ -37,7 +37,7 @@ server registration
 sparkngin hello --num-message 100000 --topic metrics.consumer
 :sleep 30000
 server metric
-server metric-clear --name-exp *
+server metric-clear --expression *
 
 sparkngin hello --num-message 1000000 --topic metrics.consumer
 server metric
