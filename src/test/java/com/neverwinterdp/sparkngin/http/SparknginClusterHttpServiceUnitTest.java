@@ -77,6 +77,11 @@ public class SparknginClusterHttpServiceUnitTest {
         " -Pkafka.zookeeper-urls=127.0.0.1:2181" +
         "  --member-role kafka --autostart --module Kafka \n" +
         
+        "module install " +
+        " -Pmodule.data.drop=true" +
+        " -Pkafka.zookeeper-urls=127.0.0.1:2181" +
+        "  --member-role kafka --autostart --module KafkaConsumer \n" +
+        
         "module install " + 
         "  -Pforwarder-class=" + NullDevMessageForwarder.class.getName() +
         "  --member-role sparkngin --autostart --module Sparkngin \n" ;
@@ -87,6 +92,7 @@ public class SparknginClusterHttpServiceUnitTest {
   void uninstall() {
     String uninstallScript = 
         "module uninstall --member-role sparkngin --timeout 20000 --module Sparkngin \n" +
+            "module uninstall --member-role kafkar --timeout 20000 --module KafkaConsumer \n" +
         "module uninstall --member-role kafkar --timeout 20000 --module Kafka \n" +
         "module uninstall --member-role zookeeper --timeout 20000 --module Zookeeper";
     shell.executeScript(uninstallScript);
