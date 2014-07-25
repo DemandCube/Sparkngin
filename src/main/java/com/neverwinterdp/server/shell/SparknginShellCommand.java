@@ -3,8 +3,8 @@ package com.neverwinterdp.server.shell;
 import com.neverwinterdp.server.gateway.Command;
 
 @ShellCommandConfig(name = "sparkngin")
-public class SparknginCommandGroup extends ShellCommand {
-  public SparknginCommandGroup() {
+public class SparknginShellCommand extends ShellCommand {
+  public SparknginShellCommand() {
     add("hello", HelloSparknginCommand.class);
   }
   

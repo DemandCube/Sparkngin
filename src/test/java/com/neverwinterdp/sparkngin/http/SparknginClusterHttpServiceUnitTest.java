@@ -1,7 +1,6 @@
 package com.neverwinterdp.sparkngin.http;
 
 import static org.junit.Assert.assertEquals;
-import io.netty.handler.codec.http.LastHttpContent;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -9,8 +8,6 @@ import org.junit.Test;
 
 import com.neverwinterdp.message.Message;
 import com.neverwinterdp.message.SampleEvent;
-import com.neverwinterdp.netty.http.client.DumpResponseHandler;
-import com.neverwinterdp.netty.http.client.HttpClient;
 import com.neverwinterdp.server.Server;
 import com.neverwinterdp.server.shell.Shell;
 import com.neverwinterdp.util.FileUtil;
