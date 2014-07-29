@@ -11,7 +11,7 @@ public class SparknginShellCommand extends ShellCommand {
   static public class HelloSparknginCommand extends ShellSubCommand {
     HelloSparkngin.Options options = new HelloSparkngin.Options();
     
-    public void execute(ShellContext ctx, Command command) {
+    public void execute(Shell shell, ShellContext ctx, Command command) {
       try {
         command.mapAll(options);
         new HelloSparkngin().run(options);

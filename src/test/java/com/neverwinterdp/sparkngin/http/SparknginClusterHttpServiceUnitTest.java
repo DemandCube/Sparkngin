@@ -50,7 +50,7 @@ public class SparknginClusterHttpServiceUnitTest {
   public void testSendMessage() throws Exception {
     install() ;
     int NUM_OF_MESSAGES = 10000 ;
-    HttpMessageClient client = new HttpMessageClient ("127.0.0.1", 8080, 300) ;
+    HttpMessageClient client = new HttpMessageClient ("127.0.0.1", 7080, 300) ;
     for(int i = 0; i < NUM_OF_MESSAGES; i++) {
       SampleEvent event = new SampleEvent("event-" + i, "event " + i) ;
       Message message = new Message("m" + i, event, true) ;
@@ -67,20 +67,21 @@ public class SparknginClusterHttpServiceUnitTest {
     String installScript =
         "module install " + 
         " -Pmodule.data.drop=true" +
+        " -Pzk:clientPort=2181" +
         " --member-role zookeeper --autostart --module Zookeeper \n" +
         
         "module install " +
         " -Pmodule.data.drop=true" +
-        " -Pkafka.zookeeper-urls=127.0.0.1:2181" +
-        "  --member-role kafka --autostart --module Kafka \n" +
+        " -Pkafka:port=9092" +
+        " --member-role kafka --autostart --module Kafka \n" +
         
         "module install " +
         " -Pmodule.data.drop=true" +
-        " -Pkafka.zookeeper-urls=127.0.0.1:2181" +
         "  --member-role kafka --autostart --module KafkaConsumer \n" +
         
         "module install " + 
-        "  -Pforwarder-class=" + NullDevMessageForwarder.class.getName() +
+        "  -Psparkngin:forwarder-class=" + NullDevMessageForwarder.class.getName() +
+        "  -Psparkngin:http-listen-port=7080" +
         "  --member-role sparkngin --autostart --module Sparkngin \n" ;
     shell.executeScript(installScript);
     Thread.sleep(1000);
@@ -89,8 +90,8 @@ public class SparknginClusterHttpServiceUnitTest {
   void uninstall() {
     String uninstallScript = 
         "module uninstall --member-role sparkngin --timeout 20000 --module Sparkngin \n" +
-            "module uninstall --member-role kafkar --timeout 20000 --module KafkaConsumer \n" +
-        "module uninstall --member-role kafkar --timeout 20000 --module Kafka \n" +
+        "module uninstall --member-role kafka --timeout 20000 --module KafkaConsumer \n" +
+        "module uninstall --member-role kafka --timeout 20000 --module Kafka \n" +
         "module uninstall --member-role zookeeper --timeout 20000 --module Zookeeper";
     shell.executeScript(uninstallScript);
   }

@@ -8,7 +8,7 @@ public class NullDevMessageForwarder implements MessageForwarder {
   public void onInit() {
   }
 
-  public void onDestroy() {
+  public void close() {
   }
   
   public int getProcessCount() { return count ; }

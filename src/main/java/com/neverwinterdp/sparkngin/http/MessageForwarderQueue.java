@@ -40,7 +40,7 @@ public class MessageForwarderQueue {
         } catch (Exception e) {
           e.printStackTrace();
         } finally {
-          forwarder.onDestroy();
+          forwarder.close();
         }
       }
     };
