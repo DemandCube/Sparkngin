@@ -48,6 +48,7 @@ dependencies {
   compile group: 'com.neverwinterdp', name: 'commons.api', version: '1.0-SNAPSHOT'
   compile group: 'com.neverwinterdp', name: 'commons.netty', version: '1.0-SNAPSHOT'
   compile group: 'com.neverwinterdp', name: 'commons.cluster', version: '1.0-SNAPSHOT'
+  compile group: 'com.neverwinterdp', name: 'commons.zookeeper', version: '1.0-SNAPSHOT'
 
   compile group: 'com.neverwinterdp', name: 'queuengin', version: '1.0-SNAPSHOT'
 
@@ -100,7 +101,7 @@ def doRelease(String releaseDir) {
   }
 
   def jars = [ 
-    "commons.utils", "commons.api", "commons.cluster", "commons.netty", "queuengin",
+    "commons.utils", "commons.api", "commons.cluster", "commons.netty", "commons.zookeeper", "queuengin",
     "jackson-core-2.2.2", "jackson-databind", "jackson-annotations", "jcommander", "reflections", "guava", "javassist",
     'guice', 'javax.inject', 'hazelcast', 'aopalliance',
     "kafka", "scala-library",
