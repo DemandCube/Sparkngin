@@ -9,19 +9,19 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import com.neverwinterdp.message.Message;
-import com.neverwinterdp.netty.http.client.HttpClient;
+import com.neverwinterdp.netty.http.client.AsyncHttpClient;
 import com.neverwinterdp.netty.http.client.ResponseHandler;
 import com.neverwinterdp.sparkngin.SendAck;
 import com.neverwinterdp.util.JSONSerializer;
 
 public class HttpMessageClient {
-  private HttpClient client ;
+  private AsyncHttpClient client ;
   private LinkedHashMap<String, Message> messages ;
   private int bufferSize ;
   private int errorCount ;
   
   public HttpMessageClient(String host, int port, int bufferSize) throws Exception {
-    client = new HttpClient (host, port, new MessageResponseHandler()) ;
+    client = new AsyncHttpClient (host, port, new MessageResponseHandler()) ;
     this.bufferSize = bufferSize ;
     messages = new LinkedHashMap<String, Message>() ;
   }
