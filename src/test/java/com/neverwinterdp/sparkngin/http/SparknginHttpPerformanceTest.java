@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.codahale.metrics.Timer;
 import com.neverwinterdp.message.Message;
 import com.neverwinterdp.netty.http.HttpServer;
-import com.neverwinterdp.netty.http.client.HttpClient;
+import com.neverwinterdp.netty.http.client.AsyncHttpClient;
 import com.neverwinterdp.util.FileUtil;
 import com.neverwinterdp.util.monitor.ApplicationMonitor;
 import com.neverwinterdp.util.monitor.ComponentMonitor;
@@ -82,7 +82,7 @@ public class SparknginHttpPerformanceTest {
     
     public Producer(ApplicationMonitor appMonitor, int num) {
       NUM_OF_MESSAGES = num ;
-      clientMonitor = appMonitor.createComponentMonitor(HttpClient.class) ;
+      clientMonitor = appMonitor.createComponentMonitor(AsyncHttpClient.class) ;
     }
     
     public void run() {

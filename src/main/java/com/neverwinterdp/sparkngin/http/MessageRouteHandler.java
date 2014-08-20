@@ -7,7 +7,7 @@ import io.netty.handler.codec.http.HttpRequest;
 
 import com.codahale.metrics.Timer;
 import com.neverwinterdp.message.Message;
-import com.neverwinterdp.netty.http.route.RouteHandlerGeneric;
+import com.neverwinterdp.netty.http.RouteHandlerGeneric;
 import com.neverwinterdp.sparkngin.SendAck;
 import com.neverwinterdp.util.JSONSerializer;
 import com.neverwinterdp.util.monitor.ApplicationMonitor;

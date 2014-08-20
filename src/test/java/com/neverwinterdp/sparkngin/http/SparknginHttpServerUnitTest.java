@@ -8,9 +8,9 @@ import org.junit.Test;
 
 import com.neverwinterdp.message.Message;
 import com.neverwinterdp.netty.http.HttpServer;
+import com.neverwinterdp.netty.http.StaticFileHandler;
 import com.neverwinterdp.netty.http.client.DumpResponseHandler;
-import com.neverwinterdp.netty.http.client.HttpClient;
-import com.neverwinterdp.netty.http.route.StaticFileHandler;
+import com.neverwinterdp.netty.http.client.AsyncHttpClient;
 import com.neverwinterdp.util.FileUtil;
 import com.neverwinterdp.util.monitor.ApplicationMonitor;
 /**
@@ -46,7 +46,7 @@ public class SparknginHttpServerUnitTest {
   @Test
   public void testStaticFileHandler() throws Exception {
     DumpResponseHandler handler = new DumpResponseHandler() ;
-    HttpClient client = new HttpClient ("127.0.0.1", 8080, handler) ;
+    AsyncHttpClient client = new AsyncHttpClient ("127.0.0.1", 8080, handler) ;
     client.get("/build.gradle");
     Thread.sleep(100) ;
   }
@@ -55,7 +55,7 @@ public class SparknginHttpServerUnitTest {
   public void testMessageRouteHandler() throws Exception {
     int NUM_OF_MESSAGES = 5 ;
     DumpResponseHandler handler = new DumpResponseHandler() ;
-    HttpClient client = new HttpClient ("127.0.0.1", 8080, handler) ;
+    AsyncHttpClient client = new AsyncHttpClient ("127.0.0.1", 8080, handler) ;
     for(int i = 0; i < NUM_OF_MESSAGES; i++) {
       Message message = new Message("m" + i, "message " + i, true) ;
       client.post("/message", message);
