@@ -4,6 +4,10 @@ apply plugin: 'maven'
 
 archivesBaseName = 'sparkngin'
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.0'
+}
+
 eclipse {
   project {
     name = 'Sparkngin'
