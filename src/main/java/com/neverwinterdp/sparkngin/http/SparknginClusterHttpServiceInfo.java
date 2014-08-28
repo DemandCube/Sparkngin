@@ -19,6 +19,9 @@ public class SparknginClusterHttpServiceInfo extends ServiceInfo {
   @Inject(optional = true) @Named("sparkngin:forwarder-class")
   private String forwarderClass = NullDevMessageForwarder.class.getName() ;
   
+  @Inject(optional = true) @Named("sparkngin:pixelServer")
+  private boolean pixelServer = false;
+  
   @Inject
   public void init(ModuleProperties moduleProperties) {
     if(queueDir == null) {
@@ -33,4 +36,6 @@ public class SparknginClusterHttpServiceInfo extends ServiceInfo {
   public String getWwwDir() { return wwwDir; }
 
   public String getQueueDir() { return queueDir; }
+  
+  public boolean getPixelServer() { return pixelServer; }
 }

@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.neverwinterdp.netty.http.HttpServer;
+import com.neverwinterdp.netty.http.PixelRouteHandler;
 import com.neverwinterdp.netty.http.StaticFileHandler;
 import com.neverwinterdp.server.module.ModuleProperties;
 import com.neverwinterdp.server.service.AbstractService;
@@ -58,6 +59,10 @@ public class SparknginClusterHttpService extends AbstractService {
       server.setDefault(fileHandler) ;
     }
     server.add("/message", new MessageRouteHandler(appMonitor, messageForwarder, serviceInfo.getQueueDir()));
+    //Enable pixel server
+    if(serviceInfo.getPixelServer()){
+      server.add("/pixel", new PixelRouteHandler());
+    }
     server.startAsDeamon();
     logger.info("Finish start()");
   }
