@@ -9,12 +9,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.neverwinterdp.netty.http.HttpServer;
 import com.neverwinterdp.netty.http.client.AsyncHttpClient;
 import com.neverwinterdp.netty.http.client.ResponseHandler;
 import com.neverwinterdp.server.Server;
 import com.neverwinterdp.server.gateway.ClusterGateway;
 import com.neverwinterdp.server.http.pixel.PixelRouteHandler;
+
 /**
  * @author Richard Duarte
  */

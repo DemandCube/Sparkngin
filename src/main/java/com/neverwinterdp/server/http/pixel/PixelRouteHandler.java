@@ -1,5 +1,8 @@
 package com.neverwinterdp.server.http.pixel;
 
+import java.util.Iterator;
+import java.util.Map.Entry;
+
 import com.neverwinterdp.netty.http.RouteHandlerGeneric;
 
 import io.netty.buffer.ByteBuf;
@@ -39,13 +42,29 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
   /**
    * Serves IMAGE as mimetype "image/png"
    */
-  protected void doGet(ChannelHandlerContext ctx, HttpRequest httpReq) {
-    
+  protected void doGet(ChannelHandlerContext ctx, final HttpRequest httpReq) {
+    Thread parseThread = new Thread() {
+      public void run() {
+        try{
+          parseHttpRequest(httpReq) ;
+        }
+          catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    };
+    parseThread.start();
     this.writeContent(ctx, httpReq, IMAGE, "image/png");
-    
   }
   
   public static ByteBuf getImageBytes(){
     return IMAGE;
+  }
+  
+  protected void parseHttpRequest(HttpRequest httpReq){
+    Iterator<Entry<String, String>> i = httpReq.headers().iterator() ;
+    while(i.hasNext()) {
+      Entry<String, String> entry =i.next();
+    }
   }
 }
