@@ -1,14 +1,19 @@
 package com.neverwinterdp.server.http.pixel;
 
-import java.util.Iterator;
-import java.util.Map.Entry;
-
-import com.neverwinterdp.netty.http.RouteHandlerGeneric;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
+import com.neverwinterdp.message.Message;
+import com.neverwinterdp.netty.http.RouteHandlerGeneric;
+import com.neverwinterdp.netty.http.client.AsyncHttpClient;
+import com.neverwinterdp.netty.http.client.DumpResponseHandler;
+import com.neverwinterdp.util.JSONSerializer;
+import com.neverwinterdp.util.UrlParser;
 
 /**
  * @author Richard Duarte
@@ -39,32 +44,46 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
                       0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, (byte)0xAE,
                       0x42, 0x60, (byte)0x82});
   
+  private AtomicLong      idTracker = new AtomicLong() ;
+  private AsyncHttpClient sparknginClient ;
+  
+  /**
+   * Configure the handler
+   */
+  public void configure(Map<String, String> props) {
+    //TODO, need to check to make sure that the connect string is not null
+    String sparknginConnect = props.get("sparkngin.connect") ;
+    System.out.println("\n\nSPARKNGIN CONNECT = " + sparknginConnect);
+    UrlParser urlParser = new UrlParser(sparknginConnect) ;
+    try {
+      DumpResponseHandler handler = new DumpResponseHandler() ;
+      sparknginClient = new AsyncHttpClient (urlParser.getHost(), urlParser.getPort(), handler) ;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+  
   /**
    * Serves IMAGE as mimetype "image/png"
    */
   protected void doGet(ChannelHandlerContext ctx, final HttpRequest httpReq) {
-    Thread parseThread = new Thread() {
-      public void run() {
-        try{
-          parseHttpRequest(httpReq) ;
-        }
-          catch (Exception e) {
-          e.printStackTrace();
-        }
-      }
-    };
-    parseThread.start();
     this.writeContent(ctx, httpReq, IMAGE, "image/png");
+    
+    //For better performance, this code should be handled in another thread, the thread should handle the buffering, exception
+    //and retry as well...
+    try {
+      RequestLog log = new RequestLog(httpReq) ;
+      String data = JSONSerializer.INSTANCE.toString(log) ;
+      //Send request log to the sparkngin
+      Message message = new Message("id-" + idTracker.incrementAndGet(), data, false) ;
+      message.getHeader().setTopic("log.pixel");
+      sparknginClient.post("/message", message);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
   
   public static ByteBuf getImageBytes(){
     return IMAGE;
-  }
-  
-  protected void parseHttpRequest(HttpRequest httpReq){
-    Iterator<Entry<String, String>> i = httpReq.headers().iterator() ;
-    while(i.hasNext()) {
-      Entry<String, String> entry =i.next();
-    }
   }
 }

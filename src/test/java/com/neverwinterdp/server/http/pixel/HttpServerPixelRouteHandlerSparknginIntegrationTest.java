@@ -1,15 +1,9 @@
 package com.neverwinterdp.server.http.pixel;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
-import com.neverwinterdp.message.Message;
-import com.neverwinterdp.message.SampleEvent;
 import com.neverwinterdp.server.Server;
-import com.neverwinterdp.server.gateway.ClusterGateway;
 import com.neverwinterdp.server.shell.Shell;
 import com.neverwinterdp.sparkngin.http.NullDevMessageForwarder;
 import com.neverwinterdp.util.FileUtil;
