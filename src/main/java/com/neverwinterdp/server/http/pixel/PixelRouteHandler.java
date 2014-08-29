@@ -51,6 +51,7 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
   private boolean connectToSpark = false;
   private UrlParser urlParser;
   private DumpResponseHandler handler;
+  //TODO: you want to forward the RequestLog object , why HttpRequest
   private Queue<HttpRequest> undeliveredHttpReq;
   
   /**
@@ -99,6 +100,7 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
    * @param httpReq
    */
   protected void forwardToSpark(HttpRequest httpReq){
+    //TODO: what if the connection is already created ?
     connectToSpark();
     //If unable to connect, store httpRequest in a list and try sending next time
     if(sparknginClient == null){
@@ -108,6 +110,7 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
     //Otherwise send all undelivered messages
     else{
       while(!undeliveredHttpReq.isEmpty()){
+        //TODO: what if sendToSpark fail
         sendToSpark(undeliveredHttpReq.remove());
       }
       sendToSpark(httpReq);
@@ -132,6 +135,8 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
   
   protected void connectToSpark(){
     //Retry connecting up to 10 times
+    //10 times , but the cpu do this 10 times in a fraction of second ?
+    //I think this is not the way to write the loop
     for(int i=0; sparknginClient == null && i<10 ; i++){
       try {
         sparknginClient = new AsyncHttpClient (urlParser.getHost(), urlParser.getPort(), handler) ;
