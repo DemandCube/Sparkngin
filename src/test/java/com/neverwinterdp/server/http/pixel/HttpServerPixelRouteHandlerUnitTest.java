@@ -12,7 +12,6 @@ import org.junit.Test;
 import com.neverwinterdp.netty.http.client.AsyncHttpClient;
 import com.neverwinterdp.netty.http.client.ResponseHandler;
 import com.neverwinterdp.server.Server;
-import com.neverwinterdp.server.gateway.ClusterGateway;
 import com.neverwinterdp.server.http.pixel.PixelRouteHandler;
 import com.neverwinterdp.server.shell.Shell;
 import com.neverwinterdp.sparkngin.http.NullDevMessageForwarder;
@@ -28,7 +27,8 @@ public class HttpServerPixelRouteHandlerUnitTest {
   
   static protected Server   httpServer, sparknginServer ;
   static Shell shell ; 
-  static int port = 8080;
+  static int httpport = 8181;
+  static int sparkport = 7080;
   
   @BeforeClass
   static public void setup() throws Exception {
@@ -42,17 +42,17 @@ public class HttpServerPixelRouteHandlerUnitTest {
     shell.exec(
       "module install " + 
       "  -Psparkngin:forwarder-class=" + NullDevMessageForwarder.class.getName() +
-      "  -Psparkngin:http-listen-port=7080" +
+      "  -Psparkngin:http-listen-port="+Integer.toString(sparkport) +
       "  --member-role sparkngin --autostart --module Sparkngin"
     ) ;
     
     shell.exec(
         "module install " +
-        " -Phttp:port="+Integer.toString(port) +
+        " -Phttp:port="+Integer.toString(httpport) +
         " -Phttp:route.names=pixel" +
         " -Phttp:route.pixel.handler=com.neverwinterdp.server.http.pixel.PixelRouteHandler" +
         " -Phttp:route.pixel.path=/pixel" +
-        " -Phttp:route.pixel.sparkngin.connect=http://127.0.0.1:7080" +
+        " -Phttp:route.pixel.sparkngin.connect=http://127.0.0.1:"+Integer.toString(sparkport) +
         " --member-name webserver --autostart --module Http"
     ) ;
   }
@@ -67,8 +67,8 @@ public class HttpServerPixelRouteHandlerUnitTest {
   @Test
   public void testContentReturnedMatchesContentServed100Requests() throws Exception {
     PixelCheckResponseHandler handler = new PixelCheckResponseHandler();
-    AsyncHttpClient client = new AsyncHttpClient ("127.0.0.1", port, handler) ;
-    int testCount = 100;
+    AsyncHttpClient client = new AsyncHttpClient ("127.0.0.1", httpport, handler) ;
+    int testCount = 1;
     for(int i = 0; i < testCount; i++) {
       client.get("/pixel");
     }

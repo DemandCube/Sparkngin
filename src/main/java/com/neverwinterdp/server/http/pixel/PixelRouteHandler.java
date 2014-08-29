@@ -5,7 +5,9 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.neverwinterdp.message.Message;
@@ -44,42 +46,98 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
                       0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, (byte)0xAE,
                       0x42, 0x60, (byte)0x82});
   
-  private AtomicLong      idTracker = new AtomicLong() ;
-  private AsyncHttpClient sparknginClient ;
+  private AtomicLong idTracker = new AtomicLong() ;
+  private AsyncHttpClient sparknginClient = null;
+  private boolean connectToSpark = false;
+  private UrlParser urlParser;
+  private DumpResponseHandler handler;
+  private Queue<HttpRequest> undeliveredHttpReq;
   
   /**
-   * Configure the handler
+   * Configure the handler and connection to sparkngin if applicable
    */
   public void configure(Map<String, String> props) {
-    //TODO, need to check to make sure that the connect string is not null
     String sparknginConnect = props.get("sparkngin.connect") ;
-    System.out.println("\n\nSPARKNGIN CONNECT = " + sparknginConnect);
-    UrlParser urlParser = new UrlParser(sparknginConnect) ;
-    try {
-      DumpResponseHandler handler = new DumpResponseHandler() ;
-      sparknginClient = new AsyncHttpClient (urlParser.getHost(), urlParser.getPort(), handler) ;
-    } catch (Exception e) {
-      e.printStackTrace();
+    if(sparknginConnect != null ){
+      System.out.println("\n\nSPARKNGIN CONNECT = " + sparknginConnect);
+      handler = new DumpResponseHandler() ;
+      urlParser = new UrlParser(sparknginConnect) ;
+      undeliveredHttpReq = new LinkedList<HttpRequest>();
+      connectToSpark = true;
     }
   }
   
   /**
    * Serves IMAGE as mimetype "image/png"
+   * If we're supposed to forward these messages to sparkngin, then do so in a thread
    */
   protected void doGet(ChannelHandlerContext ctx, final HttpRequest httpReq) {
+    //Return Pixel to client
     this.writeContent(ctx, httpReq, IMAGE, "image/png");
     
-    //For better performance, this code should be handled in another thread, the thread should handle the buffering, exception
-    //and retry as well...
+    //Forward httpReq to Sparkngin
+    forwardToSpark(httpReq);
+    /*
+    if(connectToSpark){
+      new Thread() {
+        public void run() {
+          try{
+            forwardToSpark(httpReq);
+          }
+            catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+      }.start();
+    }
+    */
+  }
+  
+  /**
+   * Connect to sparkngin and send httpRequest as well as any others that haven't been delivered yet
+   * If sparkngin cannot be connected to, then add 
+   * @param httpReq
+   */
+  protected void forwardToSpark(HttpRequest httpReq){
+    connectToSpark();
+    //If unable to connect, store httpRequest in a list and try sending next time
+    if(sparknginClient == null){
+      System.err.println("Unable to connect to Sparkngin!");
+      undeliveredHttpReq.add(httpReq);
+    }
+    //Otherwise send all undelivered messages
+    else{
+      while(!undeliveredHttpReq.isEmpty()){
+        sendToSpark(undeliveredHttpReq.remove());
+      }
+      sendToSpark(httpReq);
+      sparknginClient.close();
+    }
+  }
+  
+  
+  protected void sendToSpark(HttpRequest httpReq){
     try {
       RequestLog log = new RequestLog(httpReq) ;
       String data = JSONSerializer.INSTANCE.toString(log) ;
-      //Send request log to the sparkngin
+      //Send request log to sparkngin
       Message message = new Message("id-" + idTracker.incrementAndGet(), data, false) ;
       message.getHeader().setTopic("log.pixel");
       sparknginClient.post("/message", message);
+      
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+  
+  protected void connectToSpark(){
+    //Retry connecting up to 10 times
+    for(int i=0; sparknginClient == null && i<10 ; i++){
+      try {
+        sparknginClient = new AsyncHttpClient (urlParser.getHost(), urlParser.getPort(), handler) ;
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
   
