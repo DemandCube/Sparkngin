@@ -7,6 +7,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * Formats data to be sent to Sparkngin
+ * @author Tuan Ngyuen and Richard Duarte
+ */
 public class RequestLog {
   private String id ;
   
@@ -16,6 +20,10 @@ public class RequestLog {
   
   public RequestLog() { }
   
+  /**
+   * Constructor
+   * @param httpReq HttpRequest object to be sent to Sparkngin
+   */
   public RequestLog(HttpRequest httpReq) {
     this.uri = httpReq.getUri() ;
     this.method = httpReq.getMethod().name() ;

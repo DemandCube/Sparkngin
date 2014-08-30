@@ -1,69 +1,81 @@
 package com.neverwinterdp.server.http.pixel;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
+import com.neverwinterdp.netty.http.client.AsyncHttpClient;
 import com.neverwinterdp.server.Server;
 import com.neverwinterdp.server.shell.Shell;
 import com.neverwinterdp.sparkngin.http.NullDevMessageForwarder;
-import com.neverwinterdp.util.FileUtil;
+
 /**
+ * Tests the connection between PixelRouteHandler and Sparkngin
  * @author Richard Duarte
  */
 public class HttpServerPixelRouteHandlerSparknginIntegrationTest {
   static {
     System.setProperty("app.dir", "build/cluster") ;
-    System.setProperty("app.config.dir", "src/app/config") ;
-    System.setProperty("log4j.configuration", "file:src/app/config/log4j.properties") ;
+    System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
   }
   
-  static int sparkPort = 7080;
-  static int pixPort = 8181;
-  static protected Server pixelServer, sparknginServer ;
-  static protected Shell shell ;
-  static String TOPIC_NAME = "metrics.consumer" ;
-    
+  static protected Server httpServer, sparknginServer ;
+  static Shell shell ; 
+  static int httpport = 8181;
+  static int sparkport = 7181;
+  
   @BeforeClass
   static public void setup() throws Exception {
-    FileUtil.removeIfExist("build/cluster", false);
-    pixelServer = Server.create("-Pserver.name=pixel", "-Pserver.roles=webserver");
+    httpServer = Server.create("-Pserver.name=webserver", "-Pserver.roles=webserver") ;
     sparknginServer = Server.create("-Pserver.name=sparkngin", "-Pserver.roles=sparkngin") ;
     shell = new Shell() ;
     shell.getShellContext().connect();
-    //Wait to make sure all the servervices are launched
-    Thread.sleep(2000) ;
+    
+    shell.exec(
+      "module install " + 
+      "  -Psparkngin:forwarder-class=" + NullDevMessageForwarder.class.getName() +
+      "  -Psparkngin:http-listen-port="+Integer.toString(sparkport) +
+      "  --member-role sparkngin --autostart --module Sparkngin"
+    ) ;
+    
+    shell.exec(
+        "module install " +
+        " -Phttp:port="+Integer.toString(httpport) +
+        " -Phttp:route.names=pixel" +
+        " -Phttp:route.pixel.handler=com.neverwinterdp.server.http.pixel.PixelRouteHandler" +
+        " -Phttp:route.pixel.path=/pixel" +
+        " -Phttp:route.pixel.sparkngin.connect=http://127.0.0.1:"+Integer.toString(sparkport) +
+        " --member-name webserver --autostart --module Http"
+    ) ;
+    Thread.sleep(1000);
   }
 
   @AfterClass
   static public void teardown() throws Exception {
-    shell.close();
+    shell.close(); 
+    httpServer.destroy();
     sparknginServer.destroy() ;
   }
   
-
-  
-  private void install() throws InterruptedException {
-    String installScript =
-        "module install " + 
-        "  -Psparkngin:forwarder-class=" + NullDevMessageForwarder.class.getName() +
-        "  -Psparkngin:http-listen-port="+Integer.toString(sparkPort) +
-        "  --member-role sparkngin --autostart --module Sparkngin \n" +
-
-        "module install " +
-        " -Phttp:port="+Integer.toString(pixPort) +
-        " -Phttp:route.names=pixel" +
-        " -Phttp:route.pixel.handler=com.neverwinterdp.server.http.pixel.PixelRouteHandler" +
-        " -Phttp:route.pixel.path=/pixel" +
-        " --member-name webserver --autostart --module Http";
-
-    shell.executeScript(installScript);
+  @Test
+  public void testContentReturnedMatchesContentServed100Requests() throws Exception {
+    PixelCheckResponseHandler handler = new PixelCheckResponseHandler();
+    AsyncHttpClient client = new AsyncHttpClient ("127.0.0.1", httpport, handler) ;
+    int testCount = 100;
+    for(int i = 0; i < testCount; i++) {
+      client.get("/pixel");
+    }
     Thread.sleep(1000);
-  }
-  
-  void uninstall() {
-    String uninstallScript = 
-        "module uninstall --member-role sparkngin --timeout 20000 --module Sparkngin \n"+
-        "module uninstall --member-role webserver --timeout 20000 --module Sparkngin \n" ;
-    shell.executeScript(uninstallScript);
+    
+    //Make sure testCount responses have been received
+    assertEquals(testCount, handler.getCount());
+    
+    //Make sure no failure was caught since ResponseHandler doesn't have error handling
+    //and it eats up the error without reporting a test failure
+    assertEquals(0,handler.getFailure());
+    client.close();
+    shell.exec("server metric");
   }
 }
