@@ -43,7 +43,7 @@ public class PixelRouteForwarderUnitTest {
         " -Phttp:route.snoop.path=/message" +
         " --member-name webserver --autostart --module Http"
     ) ;
-    Thread.sleep(1000);
+    Thread.sleep(3000);
   }
 
   @AfterClass
