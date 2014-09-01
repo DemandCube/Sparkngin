@@ -59,7 +59,7 @@ public class SparknginMessageForwarder {
               Thread.sleep(1000);
             }
           }
-        }catch (Exception e) {
+        } catch (Exception e) {
           e.printStackTrace();
         }
       }
@@ -126,9 +126,6 @@ public class SparknginMessageForwarder {
    * Disconnects AsynchHttpClient from sparkngin
    */
   protected void disconnect(){
-    try{
-      sparknginClient.close();
-    }
-    catch(Exception e){}
+    sparknginClient.close();
   }
 }
