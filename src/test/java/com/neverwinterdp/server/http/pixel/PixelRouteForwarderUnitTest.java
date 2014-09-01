@@ -48,15 +48,14 @@ public class PixelRouteForwarderUnitTest {
 
   @AfterClass
   static public void teardown() throws Exception {
-    HttpSnoop.resetHits();
-    forwarder.disconnect();
     try {
       server.shutdown() ;
     }
     catch(Exception e){
       e.printStackTrace();
     }
-    
+    HttpSnoop.resetHits();
+    forwarder.disconnect();
   }
   
   @Test

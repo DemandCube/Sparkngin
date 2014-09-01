@@ -20,9 +20,9 @@ public class HttpServerPixelRouteHandlerUnitTest {
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
   }
   
-  static protected Server   httpServer, sparknginServer ;
+  static protected Server httpServer, sparknginServer ;
   static Shell shell ; 
-  static int httpport = 8181;
+  static int httpport = 8185;
   
   @BeforeClass
   static public void setup() throws Exception {
@@ -50,17 +50,15 @@ public class HttpServerPixelRouteHandlerUnitTest {
   }
   
   @Test
-  public void testContentReturnedMatchesContentServed100Requests() throws Exception {
+  public void testContentReturnedMatchesContentServed() throws Exception {
     PixelCheckResponseHandler handler = new PixelCheckResponseHandler();
     AsyncHttpClient client = new AsyncHttpClient ("127.0.0.1", httpport, handler) ;
-    int testCount = 100;
-    for(int i = 0; i < testCount; i++) {
-      client.get("/pixel");
-    }
+    client.get("/pixel");
+    
     Thread.sleep(1000);
     
     //Make sure testCount responses have been received
-    assertEquals(testCount, handler.getCount());
+    assertEquals(1, handler.getCount());
     
     //Make sure no failure was caught since ResponseHandler doesn't have error handling
     //and it eats up the error without reporting a test failure
