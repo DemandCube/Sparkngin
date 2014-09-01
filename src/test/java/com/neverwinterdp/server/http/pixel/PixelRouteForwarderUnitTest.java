@@ -66,20 +66,5 @@ public class PixelRouteForwarderUnitTest {
     }
     assertEquals(1,HttpSnoop.getHits());
   }
-  
-  @Test
-  public void testMessageForwarderHitsHttpPost100Times() {
-    HttpSnoop.resetHits();
-    forwarder = new PixelLogForwarder("127.0.0.1",port);
-    for(int i=0; i<100; i++){
-      forwarder.forward(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
-    }
-    //Give the buffer a chance to catch up 
-    try {
-      Thread.sleep(2000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    assertEquals(100,HttpSnoop.getHits());
-  }
+
 }
