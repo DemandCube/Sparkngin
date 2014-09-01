@@ -6,7 +6,6 @@ import com.neverwinterdp.server.module.ModuleProperties;
 import com.neverwinterdp.server.service.ServiceInfo;
 
 public class SparknginClusterHttpServiceInfo extends ServiceInfo {
-  
   @Inject(optional = true) @Named("sparkngin:http-listen-port")
   private int httpListenPort = 8080 ;
   

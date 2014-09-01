@@ -41,7 +41,7 @@ public class SparknginClusterHttpService extends AbstractService {
   
   public boolean cleanup() throws Exception {
     FileUtil.removeIfExist(serviceInfo.getQueueDir(), false);
-    logger.info("Clean queue data directory");
+    logger.info("Clean sparkngin queue data directory");
     return true ;
   }
   
