@@ -24,7 +24,7 @@ public class PixelRouteForwarderRecoveryOverflowUnitTest {
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
   }
   
-  static int port = 8181;
+  static int port = 8199;
   static Server server ;
   static Shell shell;
   static PixelLogForwarder forwarder;
@@ -46,7 +46,7 @@ public class PixelRouteForwarderRecoveryOverflowUnitTest {
   @Test
   public void testBufferedMessagesGetSentAfterSparknginLaunches(){
     HttpSnoop.resetHits();
-    forwarder = new PixelLogForwarder("127.0.0.1",port, "/messages", 100);
+    forwarder = new PixelLogForwarder("127.0.0.1",port, "/message", 100);
     int numMessages=120;
     for(int i=0; i<numMessages; i++){
       forwarder.forward(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
