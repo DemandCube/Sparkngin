@@ -60,17 +60,14 @@ public class HttpServerPixelRouteHandlerSparknginIntegrationUnitTest {
   }
   
   @Test
-  public void testContentReturnedMatchesContentServed100Requests() throws Exception {
+  public void testContentReturnedMatchesContentServed() throws Exception {
     PixelCheckResponseHandler handler = new PixelCheckResponseHandler();
     AsyncHttpClient client = new AsyncHttpClient ("127.0.0.1", httpport, handler) ;
-    int testCount = 100;
-    for(int i = 0; i < testCount; i++) {
-      client.get("/pixel");
-    }
+    client.get("/pixel");
     Thread.sleep(1000);
     
     //Make sure testCount responses have been received
-    assertEquals(testCount, handler.getCount());
+    assertEquals(1, handler.getCount());
     
     //Make sure no failure was caught since ResponseHandler doesn't have error handling
     //and it eats up the error without reporting a test failure
