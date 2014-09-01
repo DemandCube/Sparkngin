@@ -28,7 +28,7 @@ import com.neverwinterdp.util.IOUtil;
  * @email  tuan08@gmail.com
  */
 public class HttpServerPingUnitTest {
-  final static int LISTEN_PORT = 8181 ;
+  final static int LISTEN_PORT = 11115 ;
   final static String PING_URL = "http://127.0.0.1:" + LISTEN_PORT + "/ping" ;
  
   private EmbbededVertxServer server ;
