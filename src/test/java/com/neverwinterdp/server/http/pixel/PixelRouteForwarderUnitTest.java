@@ -17,7 +17,7 @@ import com.neverwinterdp.server.shell.Shell;
  * @author Richard Duarte
  *
  */
-public class SparknginMessageForwarderUnitTest {
+public class PixelRouteForwarderUnitTest {
   static {
     System.setProperty("app.dir", "build/cluster") ;
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
@@ -26,7 +26,7 @@ public class SparknginMessageForwarderUnitTest {
   static int port = 8181;
   static Server server ;
   static Shell shell;
-  static SparknginMessageForwarder forwarder;
+  static PixelLogForwarder forwarder;
   
   @BeforeClass
   static public void setup() throws Exception {
@@ -54,12 +54,13 @@ public class SparknginMessageForwarderUnitTest {
   }
   
   @Test
-  public void testMessageForwarderHitsHttpPost(){
+  public void testMessageForwarderHitsHttpPost() {
     HttpSnoop.resetHits();
-    forwarder = new SparknginMessageForwarder("127.0.0.1",port);
-    forwarder.forwardToSpark(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
+    forwarder = new PixelLogForwarder("127.0.0.1",port);
+    forwarder.forward(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
+    //Give the buffer a chance to catch up
     try {
-      Thread.sleep(500);
+      Thread.sleep(2000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
@@ -67,14 +68,15 @@ public class SparknginMessageForwarderUnitTest {
   }
   
   @Test
-  public void testMessageForwarderHitsHttpPost100Times(){
+  public void testMessageForwarderHitsHttpPost100Times() {
     HttpSnoop.resetHits();
-    forwarder = new SparknginMessageForwarder("127.0.0.1",port);
+    forwarder = new PixelLogForwarder("127.0.0.1",port);
     for(int i=0; i<100; i++){
-      forwarder.forwardToSpark(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
+      forwarder.forward(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
     }
+    //Give the buffer a chance to catch up 
     try {
-      Thread.sleep(500);
+      Thread.sleep(2000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }

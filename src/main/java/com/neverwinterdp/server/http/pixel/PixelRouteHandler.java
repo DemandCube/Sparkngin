@@ -1,23 +1,18 @@
 package com.neverwinterdp.server.http.pixel;
 
+import java.util.Map;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.atomic.AtomicLong;
-
-import com.neverwinterdp.message.Message;
 import com.neverwinterdp.netty.http.RouteHandlerGeneric;
-import com.neverwinterdp.netty.http.client.AsyncHttpClient;
-import com.neverwinterdp.netty.http.client.DumpResponseHandler;
-import com.neverwinterdp.util.JSONSerializer;
 import com.neverwinterdp.util.UrlParser;
 
 /**
+ * Route to handle returning a 1x1 100% transparent png
+ * Responds to GET requests in HTTP
  * @author Richard Duarte
  */
 public class PixelRouteHandler extends RouteHandlerGeneric {
@@ -46,25 +41,19 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
                       0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, (byte)0xAE,
                       0x42, 0x60, (byte)0x82});
   
-  private AtomicLong idTracker = new AtomicLong() ;
-  private AsyncHttpClient sparknginClient = null;
+  
   private boolean connectToSpark = false;
-  private UrlParser urlParser;
-  private DumpResponseHandler handler;
-  //TODO: you want to forward the RequestLog object , why HttpRequest
-  private Queue<HttpRequest> undeliveredHttpReq;
+  private PixelLogForwarder forwarder;
   
   /**
-   * Configure the handler and connection to sparkngin if applicable
+   * Configure the handler and connection to sparkngin if sparkngin.connect is set
    */
   public void configure(Map<String, String> props) {
     String sparknginConnect = props.get("sparkngin.connect") ;
     if(sparknginConnect != null ){
-      System.out.println("\n\nSPARKNGIN CONNECT = " + sparknginConnect);
-      handler = new DumpResponseHandler() ;
-      urlParser = new UrlParser(sparknginConnect) ;
-      undeliveredHttpReq = new LinkedList<HttpRequest>();
       connectToSpark = true;
+      UrlParser u = new UrlParser(sparknginConnect) ;
+      forwarder = new PixelLogForwarder(u.getHost(),u.getPort());
     }
   }
   
@@ -72,79 +61,26 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
    * Serves IMAGE as mimetype "image/png"
    * If we're supposed to forward these messages to sparkngin, then do so in a thread
    */
-  protected void doGet(ChannelHandlerContext ctx, final HttpRequest httpReq) {
+  protected void doGet(ChannelHandlerContext ctx, HttpRequest httpReq) {
     //Return Pixel to client
     this.writeContent(ctx, httpReq, IMAGE, "image/png");
     
     //Forward httpReq to Sparkngin
-    forwardToSpark(httpReq);
-    /*
     if(connectToSpark){
+      final RequestLog log = new RequestLog(httpReq);
       new Thread() {
         public void run() {
           try{
-            forwardToSpark(httpReq);
+            forwarder.forward(log);
           }
-            catch (Exception e) {
+          catch (Exception e) {
             e.printStackTrace();
           }
         }
       }.start();
     }
-    */
   }
-  
-  /**
-   * Connect to sparkngin and send httpRequest as well as any others that haven't been delivered yet
-   * If sparkngin cannot be connected to, then add 
-   * @param httpReq
-   */
-  protected void forwardToSpark(HttpRequest httpReq){
-    //TODO: what if the connection is already created ?
-    connectToSpark();
-    //If unable to connect, store httpRequest in a list and try sending next time
-    if(sparknginClient == null){
-      System.err.println("Unable to connect to Sparkngin!");
-      undeliveredHttpReq.add(httpReq);
-    }
-    //Otherwise send all undelivered messages
-    else{
-      while(!undeliveredHttpReq.isEmpty()){
-        //TODO: what if sendToSpark fail
-        sendToSpark(undeliveredHttpReq.remove());
-      }
-      sendToSpark(httpReq);
-      sparknginClient.close();
-    }
-  }
-  
-  
-  protected void sendToSpark(HttpRequest httpReq){
-    try {
-      RequestLog log = new RequestLog(httpReq) ;
-      String data = JSONSerializer.INSTANCE.toString(log) ;
-      //Send request log to sparkngin
-      Message message = new Message("id-" + idTracker.incrementAndGet(), data, false) ;
-      message.getHeader().setTopic("log.pixel");
-      sparknginClient.post("/message", message);
-      
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-  
-  protected void connectToSpark(){
-    //Retry connecting up to 10 times
-    //10 times , but the cpu do this 10 times in a fraction of second ?
-    //I think this is not the way to write the loop
-    for(int i=0; sparknginClient == null && i<10 ; i++){
-      try {
-        sparknginClient = new AsyncHttpClient (urlParser.getHost(), urlParser.getPort(), handler) ;
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
+
   
   public static ByteBuf getImageBytes(){
     return IMAGE;

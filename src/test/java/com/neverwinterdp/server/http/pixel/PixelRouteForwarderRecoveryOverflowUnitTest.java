@@ -14,9 +14,11 @@ import com.neverwinterdp.server.shell.Shell;
 
 /**
  * Test to make sure that if sparkngin is down, no messages are lost
+ * Sends too many messages for the buffer to handle, makes sure there are no failures and the 
+ * correct number of messages are sent
  * @author Richard Duarte
  */
-public class SparknginMessageForwarderRecoveryTest {
+public class PixelRouteForwarderRecoveryOverflowUnitTest {
   static {
     System.setProperty("app.dir", "build/cluster") ;
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
@@ -25,7 +27,7 @@ public class SparknginMessageForwarderRecoveryTest {
   static int port = 8181;
   static Server server ;
   static Shell shell;
-  static SparknginMessageForwarder forwarder;
+  static PixelLogForwarder forwarder;
   
   @BeforeClass
   static public void setup() throws Exception {
@@ -44,19 +46,17 @@ public class SparknginMessageForwarderRecoveryTest {
   @Test
   public void testBufferedMessagesGetSentAfterSparknginLaunches(){
     HttpSnoop.resetHits();
-    forwarder = new SparknginMessageForwarder("127.0.0.1",port);
-    int numMessages=8;
+    forwarder = new PixelLogForwarder("127.0.0.1",port);
+    int numMessages=12000;
     for(int i=0; i<numMessages; i++){
-      forwarder.forwardToSpark(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
+      forwarder.forward(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
     }
+    assertEquals(0,HttpSnoop.getHits());
     try {
-      Thread.sleep(500);
+      Thread.sleep(8000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-
-    assertEquals(0,HttpSnoop.getHits());
-    
     //Start HTTP server
     shell.exec(
         "module install " +
@@ -66,21 +66,29 @@ public class SparknginMessageForwarderRecoveryTest {
         " -Phttp:route.snoop.path=/message" +
         " --member-name webserver --autostart --module Http"
     ) ;
-    
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    for(int i=0; i<numMessages; i++){
-      forwarder.forwardToSpark(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
-    }
-    try {
-      Thread.sleep(500);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
 
-    assertEquals(numMessages*2,HttpSnoop.getHits());
+    //Could take up to 6 seconds to reconnect
+    //Plus need time to allow buffer to catch up
+    try {
+      Thread.sleep(8000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    
+    //Make sure only the size of the buffer is sent
+    assertEquals(10000,HttpSnoop.getHits());
+    for(int i=0; i<1000; i++) {
+      forwarder.forward(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
+    }
+    
+    //Give queue chance to catch up again
+    try {
+      Thread.sleep(2000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    
+    //Queue is size 10,000, plus the next 1000 messages, make sure they're all seen
+    assertEquals(11000,HttpSnoop.getHits());
   }
 }

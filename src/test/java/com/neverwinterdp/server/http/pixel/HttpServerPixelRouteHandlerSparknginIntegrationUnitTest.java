@@ -15,7 +15,7 @@ import com.neverwinterdp.sparkngin.http.NullDevMessageForwarder;
  * Tests the connection between PixelRouteHandler and Sparkngin
  * @author Richard Duarte
  */
-public class HttpServerPixelRouteHandlerSparknginIntegrationTest {
+public class HttpServerPixelRouteHandlerSparknginIntegrationUnitTest {
   static {
     System.setProperty("app.dir", "build/cluster") ;
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
