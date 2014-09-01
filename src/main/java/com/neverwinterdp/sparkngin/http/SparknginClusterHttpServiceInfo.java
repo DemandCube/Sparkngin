@@ -33,4 +33,5 @@ public class SparknginClusterHttpServiceInfo extends ServiceInfo {
   public String getWwwDir() { return wwwDir; }
 
   public String getQueueDir() { return queueDir; }
+  
 }

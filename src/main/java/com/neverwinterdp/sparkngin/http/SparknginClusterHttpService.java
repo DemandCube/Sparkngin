@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.neverwinterdp.netty.http.HttpServer;
+import com.neverwinterdp.server.http.pixel.PixelRouteHandler;
 import com.neverwinterdp.netty.http.StaticFileHandler;
 import com.neverwinterdp.server.module.ModuleProperties;
 import com.neverwinterdp.server.service.AbstractService;
