@@ -50,7 +50,13 @@ public class PixelRouteForwarderUnitTest {
   static public void teardown() throws Exception {
     HttpSnoop.resetHits();
     forwarder.disconnect();
-    server.shutdown() ;
+    try {
+      server.shutdown() ;
+    }
+    catch(Exception e){
+      e.printStackTrace();
+    }
+    
   }
   
   @Test
@@ -66,5 +72,4 @@ public class PixelRouteForwarderUnitTest {
     }
     assertEquals(1,HttpSnoop.getHits());
   }
-
 }
