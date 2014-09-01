@@ -41,8 +41,8 @@ public class PixelLogForwarder {
    * @param Host Hostname of Sparkngin
    * @param Port Port Sparkngin is listening on
    */
-  public PixelLogForwarder(String Host, int Port) {
-    this(Host,Port,"/message",10000);
+  public PixelLogForwarder(String host, int port) {
+    this(host,port,"/message",10000);
   }
   
   /**

@@ -44,8 +44,8 @@ public class PixelRouteForwarderRecoveryUnitTest {
   @Test
   public void testBufferedMessagesGetSentAfterSparknginLaunches(){
     HttpSnoop.resetHits();
-    forwarder = new PixelLogForwarder("127.0.0.1",port);
-    int numMessages=10000;
+    forwarder = new PixelLogForwarder("127.0.0.1",port,"/message",100);
+    int numMessages=100;
     for(int i=0; i<numMessages; i++){
       forwarder.forward(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
     }

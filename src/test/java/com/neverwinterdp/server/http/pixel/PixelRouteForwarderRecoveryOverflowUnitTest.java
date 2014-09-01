@@ -46,8 +46,8 @@ public class PixelRouteForwarderRecoveryOverflowUnitTest {
   @Test
   public void testBufferedMessagesGetSentAfterSparknginLaunches(){
     HttpSnoop.resetHits();
-    forwarder = new PixelLogForwarder("127.0.0.1",port);
-    int numMessages=12000;
+    forwarder = new PixelLogForwarder("127.0.0.1",port, "/messages", 100);
+    int numMessages=120;
     for(int i=0; i<numMessages; i++){
       forwarder.forward(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
     }
@@ -76,8 +76,8 @@ public class PixelRouteForwarderRecoveryOverflowUnitTest {
     }
     
     //Make sure only the size of the buffer is sent
-    assertEquals(10000,HttpSnoop.getHits());
-    for(int i=0; i<1000; i++) {
+    assertEquals(100,HttpSnoop.getHits());
+    for(int i=0; i<100; i++) {
       forwarder.forward(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
     }
     
@@ -88,7 +88,7 @@ public class PixelRouteForwarderRecoveryOverflowUnitTest {
       e.printStackTrace();
     }
     
-    //Queue is size 10,000, plus the next 1000 messages, make sure they're all seen
-    assertEquals(11000,HttpSnoop.getHits());
+    //Queue is size 100, plus the next 100 messages, make sure they're all seen
+    assertEquals(200,HttpSnoop.getHits());
   }
 }
