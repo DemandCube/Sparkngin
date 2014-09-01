@@ -22,7 +22,7 @@ public class PixelRouteForwarderRecoveryUnitTest {
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
   }
   
-  static int port = 8191;
+  static int port = 9195;
   static Server server ;
   static Shell shell;
   static PixelLogForwarder forwarder;

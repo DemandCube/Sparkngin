@@ -23,7 +23,7 @@ public class PixelRouteForwarderUnitTest {
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
   }
   
-  static int port = 9981;
+  static int port = 9999;
   static Server server ;
   static Shell shell;
   static PixelLogForwarder forwarder;
@@ -48,12 +48,7 @@ public class PixelRouteForwarderUnitTest {
 
   @AfterClass
   static public void teardown() throws Exception {
-    try {
-      server.shutdown() ;
-    }
-    catch(Exception e){
-      e.printStackTrace();
-    }
+    server.shutdown() ;
     HttpSnoop.resetHits();
     forwarder.disconnect();
   }

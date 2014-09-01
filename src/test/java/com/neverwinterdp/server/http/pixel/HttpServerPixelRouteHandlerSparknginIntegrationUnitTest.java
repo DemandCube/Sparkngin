@@ -23,7 +23,7 @@ public class HttpServerPixelRouteHandlerSparknginIntegrationUnitTest {
   
   static protected Server httpServer, sparknginServer ;
   static Shell shell ; 
-  static int httpport = 8181;
+  static int httpport = 9181;
   static int sparkport = 7181;
   
   @BeforeClass

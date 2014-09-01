@@ -22,7 +22,7 @@ public class HttpServerPixelRouteHandlerUnitTest {
   
   static protected Server httpServer, sparknginServer ;
   static Shell shell ; 
-  static int httpport = 8185;
+  static int httpport = 9185;
   
   @BeforeClass
   static public void setup() throws Exception {
