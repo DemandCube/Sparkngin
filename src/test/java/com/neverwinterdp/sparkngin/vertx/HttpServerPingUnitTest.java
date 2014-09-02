@@ -6,8 +6,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.Vertx;
@@ -31,17 +33,17 @@ public class HttpServerPingUnitTest {
   final static int LISTEN_PORT = 8181 ;
   final static String PING_URL = "http://127.0.0.1:" + LISTEN_PORT + "/ping" ;
  
-  private EmbbededVertxServer server ;
+  private static EmbbededVertxServer server ;
   
-  @Before
-  public void setup() throws Exception {
+  @BeforeClass
+  static public void setup() throws Exception {
     server = new EmbbededVertxServer() ;
     server.deployVerticle(HttpServerPingVerticle.class, 1);
     Thread.sleep(2000);
   }
   
-  @After
-  public void teardown() throws Exception {
+  @AfterClass
+  static public void teardown() throws Exception {
     server.stop(); 
   }
     
