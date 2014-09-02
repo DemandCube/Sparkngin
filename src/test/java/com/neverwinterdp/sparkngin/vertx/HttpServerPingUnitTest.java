@@ -106,16 +106,14 @@ public class HttpServerPingUnitTest {
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create() ;
     org.apache.http.client.HttpClient httpClient = httpClientBuilder.build();
 
-    for(int i = 0; i < 5; i++) {
-      HttpPost postRequest = new HttpPost(PING_URL) ;
-      StringEntity input = new StringEntity("{'test': 'this is a test'}");
-      input.setContentType("application/json");
-      postRequest.setEntity(input);
-      HttpResponse response = httpClient.execute(postRequest);
-      postRequest.abort()  ;
-      String message = IOUtil.getStreamContentAsString(response.getEntity().getContent(), "UTF-8") ;
-      Assert.assertEquals(HttpServerPingVerticle.REPLY_MESSAGE, message);
-    }
+    HttpPost postRequest = new HttpPost(PING_URL) ;
+    StringEntity input = new StringEntity("{'test': 'this is a test'}");
+    input.setContentType("application/json");
+    postRequest.setEntity(input);
+    HttpResponse response = httpClient.execute(postRequest);
+    postRequest.abort()  ;
+    String message = IOUtil.getStreamContentAsString(response.getEntity().getContent(), "UTF-8") ;
+    Assert.assertEquals(HttpServerPingVerticle.REPLY_MESSAGE, message);
   }
  
   static public class HttpServerPingVerticle extends Verticle {
