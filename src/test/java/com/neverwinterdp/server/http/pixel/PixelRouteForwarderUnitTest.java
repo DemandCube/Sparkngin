@@ -23,7 +23,7 @@ public class PixelRouteForwarderUnitTest {
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
   }
   
-  static int port = 8181;
+  static int port = 9999;
   static Server server ;
   static Shell shell;
   static PixelLogForwarder forwarder;
@@ -43,14 +43,14 @@ public class PixelRouteForwarderUnitTest {
         " -Phttp:route.snoop.path=/message" +
         " --member-name webserver --autostart --module Http"
     ) ;
-    Thread.sleep(1000);
+    Thread.sleep(3000);
   }
 
   @AfterClass
   static public void teardown() throws Exception {
+    server.shutdown() ;
     HttpSnoop.resetHits();
     forwarder.disconnect();
-    server.shutdown() ;
   }
   
   @Test
@@ -65,21 +65,5 @@ public class PixelRouteForwarderUnitTest {
       e.printStackTrace();
     }
     assertEquals(1,HttpSnoop.getHits());
-  }
-  
-  @Test
-  public void testMessageForwarderHitsHttpPost100Times() {
-    HttpSnoop.resetHits();
-    forwarder = new PixelLogForwarder("127.0.0.1",port);
-    for(int i=0; i<100; i++){
-      forwarder.forward(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
-    }
-    //Give the buffer a chance to catch up 
-    try {
-      Thread.sleep(2000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    assertEquals(100,HttpSnoop.getHits());
   }
 }
