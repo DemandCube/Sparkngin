@@ -1,17 +1,15 @@
-package com.neverwinterdp.server.http.pixel;
+package com.neverwinterdp.server.http.pixel.old;
+
+import java.util.Map;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
-
-import com.neverwinterdp.message.Message;
 import com.neverwinterdp.netty.http.RouteHandlerGeneric;
-import com.neverwinterdp.sparkngin.Sparkngin;
-import com.neverwinterdp.util.JSONSerializer;
+import com.neverwinterdp.server.http.pixel.RequestLog;
+import com.neverwinterdp.util.UrlParser;
 
 /**
  * Route to handle returning a 1x1 100% transparent png
@@ -19,7 +17,8 @@ import com.neverwinterdp.util.JSONSerializer;
  * @author Richard Duarte
  */
 public class PixelRouteHandler extends RouteHandlerGeneric {
-//This is a byte array for a 1x1 100% transparent .png image 
+  
+  //This is a byte array for a 1x1 100% transparent .png image 
   final static ByteBuf IMAGE = Unpooled.wrappedBuffer(
                     new byte[]
                     {(byte)0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 
@@ -44,17 +43,19 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
                       0x42, 0x60, (byte)0x82});
   
   
-  private Sparkngin sparkngin ;
-  private AtomicLong idTracker  = new AtomicLong();
-  
-  public PixelRouteHandler(Sparkngin sparkngin) {
-    this.sparkngin = sparkngin ;
-  }
+  private boolean connectToSpark = false;
+  private PixelLogForwarder forwarder;
   
   /**
    * Configure the handler and connection to sparkngin if sparkngin.connect is set
    */
   public void configure(Map<String, String> props) {
+    String sparknginConnect = props.get("sparkngin.connect") ;
+    if(sparknginConnect != null ){
+      connectToSpark = true;
+      UrlParser u = new UrlParser(sparknginConnect) ;
+      forwarder = new PixelLogForwarder(u.getHost(),u.getPort());
+    }
   }
   
   /**
@@ -63,17 +64,26 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
    */
   protected void doGet(ChannelHandlerContext ctx, HttpRequest httpReq) {
     //Return Pixel to client
-    writeContent(ctx, httpReq, IMAGE.retain(), "image/png");
-    ctx.flush() ;
+    this.writeContent(ctx, httpReq, IMAGE, "image/png");
     
-    RequestLog log = new RequestLog(httpReq);
-    String data = JSONSerializer.INSTANCE.toString(log) ;
-    //Send request log to sparkngin
-    Message message = new Message("id-" + idTracker.incrementAndGet(), data, false) ;
-    message.getHeader().setTopic("log.pixel") ;
-    sparkngin.push(message) ;
+    //Forward httpReq to Sparkngin
+    if(connectToSpark){
+      final RequestLog log = new RequestLog(httpReq);
+      new Thread() {
+        public void run() {
+          try{
+            forwarder.forward(log);
+          }
+          catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+      }.start();
+    }
   }
 
   
-  public static ByteBuf getImageBytes() { return IMAGE; }
+  public static ByteBuf getImageBytes(){
+    return IMAGE;
+  }
 }

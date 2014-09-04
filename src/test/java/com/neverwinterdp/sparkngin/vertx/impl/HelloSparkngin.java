@@ -2,10 +2,10 @@ package com.neverwinterdp.sparkngin.vertx.impl;
 
 import com.neverwinterdp.message.Message;
 import com.neverwinterdp.message.SampleEvent;
-import com.neverwinterdp.sparkngin.SendAck;
+import com.neverwinterdp.sparkngin.Ack;
 import com.neverwinterdp.sparkngin.SendMessageHandler;
+import com.neverwinterdp.sparkngin.ClusterSparknginClient;
 import com.neverwinterdp.sparkngin.SparknginClient;
-import com.neverwinterdp.sparkngin.SparknginSimpleClient;
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
@@ -40,21 +40,21 @@ public class HelloSparkngin {
     }
     
     SendMessageHandler sendHandler = new SendMessageHandler() {
-      public void onResponse(Message msg, SparknginSimpleClient client, SendAck ack) {
+      public void onResponse(Message msg, SparknginClient client, Ack ack) {
         SampleEvent event =  msg.getData().getDataAs(SampleEvent.class) ;
         System.out.println("Ack: " + event.getDescription() + " " + ack.getStatus()) ;
       }
 
-      public void onError(Message message, SparknginSimpleClient client, Throwable error) {
+      public void onError(Message message, SparknginClient client, Throwable error) {
       }
 
-      public void onRetry(Message message, SparknginSimpleClient client) {
+      public void onRetry(Message message, SparknginClient client) {
       }
     };
     
     System.out.println("Start sending " + numOfMessages + " to topic " + topic);
-    SparknginSimpleClient[] simpleClients = SparknginSimpleVertxHttpClient.create(connectionUrl) ;
-    SparknginClient client = new SparknginClient(simpleClients) ; ;
+    SparknginClient[] simpleClients = SparknginSimpleVertxHttpClient.create(connectionUrl) ;
+    ClusterSparknginClient client = new ClusterSparknginClient(simpleClients) ; ;
     for(int i = 0; i < numOfMessages; i++) {
       SampleEvent event = new SampleEvent("event-" + i, "event " + i) ;
       Message message = new Message("m" + i, event, true) ;

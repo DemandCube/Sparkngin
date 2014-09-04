@@ -1,4 +1,4 @@
-package com.neverwinterdp.server.http.pixel;
+package com.neverwinterdp.server.http.pixel.old;
 
 import static org.junit.Assert.assertEquals;
 

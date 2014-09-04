@@ -9,15 +9,15 @@ import org.vertx.java.core.http.HttpClientRequest;
 import org.vertx.java.core.http.HttpClientResponse;
 
 import com.neverwinterdp.message.Message;
-import com.neverwinterdp.sparkngin.SendAck;
+import com.neverwinterdp.sparkngin.Ack;
 import com.neverwinterdp.sparkngin.SendMessageHandler;
-import com.neverwinterdp.sparkngin.SparknginSimpleClient;
+import com.neverwinterdp.sparkngin.SparknginClient;
 import com.neverwinterdp.util.JSONSerializer;
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
  */
-public class SparknginSimpleVertxHttpClient implements SparknginSimpleClient {
+public class SparknginSimpleVertxHttpClient implements SparknginClient {
   private String host ;
   private int    port ;
   private String connectionUrl ;
@@ -45,7 +45,7 @@ public class SparknginSimpleVertxHttpClient implements SparknginSimpleClient {
         event.bodyHandler(new Handler<Buffer>() {
           public void handle(Buffer data) {
             String json = data.toString() ;
-            SendAck ack = JSONSerializer.INSTANCE.fromString(json, SendAck.class) ;
+            Ack ack = JSONSerializer.INSTANCE.fromString(json, Ack.class) ;
             mHandler.onResponse(message, SparknginSimpleVertxHttpClient.this, ack) ;
           }
         });
@@ -60,8 +60,8 @@ public class SparknginSimpleVertxHttpClient implements SparknginSimpleClient {
     postReq.end(json) ;
   }
   
-  static public SparknginSimpleClient[] create(String[] connectionUrls) {
-    SparknginSimpleClient[] instances = new SparknginSimpleClient[connectionUrls.length] ;
+  static public SparknginClient[] create(String[] connectionUrls) {
+    SparknginClient[] instances = new SparknginClient[connectionUrls.length] ;
     for(int i = 0; i < instances.length; i++) {
       instances[i] = new SparknginSimpleVertxHttpClient(connectionUrls[i]) ;
     }

@@ -1,4 +1,4 @@
-package com.neverwinterdp.server.http.pixel;
+package com.neverwinterdp.server.http.pixel.old;
 
 import static org.junit.Assert.assertEquals;
 import io.netty.handler.codec.http.DefaultHttpRequest;
@@ -10,6 +10,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.neverwinterdp.server.Server;
+import com.neverwinterdp.server.http.pixel.RequestLog;
+import com.neverwinterdp.server.http.pixel.old.PixelLogForwarder;
 import com.neverwinterdp.server.shell.Shell;
 
 /**

@@ -11,6 +11,8 @@ import com.neverwinterdp.netty.http.HttpServer;
 import com.neverwinterdp.netty.http.StaticFileHandler;
 import com.neverwinterdp.netty.http.client.DumpResponseHandler;
 import com.neverwinterdp.netty.http.client.AsyncHttpClient;
+import com.neverwinterdp.sparkngin.NullDevMessageForwarder;
+import com.neverwinterdp.sparkngin.Sparkngin;
 import com.neverwinterdp.util.FileUtil;
 import com.neverwinterdp.util.monitor.ApplicationMonitor;
 /**
@@ -32,7 +34,7 @@ public class SparknginHttpServerUnitTest {
     forwarder = new NullDevMessageForwarder() ;
     server = new HttpServer() ;
     appMonitor = new ApplicationMonitor() ;
-    server.add("/message", new MessageRouteHandler(appMonitor, forwarder, "build/queue/data")) ;
+    server.add("/message", new MessageRouteHandler(new Sparkngin(appMonitor, forwarder, "build/queue/data"))) ;
     server.setDefault(new StaticFileHandler(".")) ;
     server.startAsDeamon() ;
     Thread.sleep(2000) ;

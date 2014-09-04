@@ -9,15 +9,15 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.neverwinterdp.message.Message;
-import com.neverwinterdp.sparkngin.SendAck;
+import com.neverwinterdp.sparkngin.Ack;
 import com.neverwinterdp.sparkngin.SendMessageHandler;
-import com.neverwinterdp.sparkngin.SparknginSimpleClient;
+import com.neverwinterdp.sparkngin.SparknginClient;
 import com.neverwinterdp.util.JSONSerializer;
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
  */
-public class SparknginSimpleAppacheHttpClient implements SparknginSimpleClient {
+public class SparknginSimpleAppacheHttpClient implements SparknginClient {
   private String connectionUrl ;
   HttpClient httpClient ;
   
@@ -34,14 +34,14 @@ public class SparknginSimpleAppacheHttpClient implements SparknginSimpleClient {
   
   public void send(String topic, Message message, SendMessageHandler handler) {
     try {
-      SendAck ack = send(topic, message) ;
+      Ack ack = send(topic, message) ;
       handler.onResponse(message, this, ack);
     } catch (Exception error) {
       handler.onError(message, this, error);
     }
   }
 
-  SendAck send(String topic, Message message) throws Exception {
+  Ack send(String topic, Message message) throws Exception {
     String url = connectionUrl + "/message/" + topic ;  
     HttpPost postRequest = new HttpPost(url);
     String json = JSONSerializer.INSTANCE.toString(message);
@@ -56,12 +56,12 @@ public class SparknginSimpleAppacheHttpClient implements SparknginSimpleClient {
     }
     ByteArrayOutputStream out = new ByteArrayOutputStream() ;
     response.getEntity().writeTo(out) ;
-    SendAck ack = JSONSerializer.INSTANCE.fromBytes(out.toByteArray(), SendAck.class) ;
+    Ack ack = JSONSerializer.INSTANCE.fromBytes(out.toByteArray(), Ack.class) ;
     return ack ;
   }
   
-  static public SparknginSimpleClient[] create(String[] connectionUrls) {
-    SparknginSimpleClient[] instances = new SparknginSimpleClient[connectionUrls.length] ;
+  static public SparknginClient[] create(String[] connectionUrls) {
+    SparknginClient[] instances = new SparknginClient[connectionUrls.length] ;
     for(int i = 0; i < instances.length; i++) {
       instances[i] = new SparknginSimpleAppacheHttpClient(connectionUrls[i]) ;
     }

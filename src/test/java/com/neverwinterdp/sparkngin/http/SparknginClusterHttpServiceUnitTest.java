@@ -32,14 +32,14 @@ public class SparknginClusterHttpServiceUnitTest {
   public void testSendMessage() throws Exception {
     clusterBuilder.install() ;
     int NUM_OF_MESSAGES = 10000 ;
-    HttpMessageClient client = new HttpMessageClient ("127.0.0.1", 7080, 300) ;
+    HttpSparknginClient client = new HttpSparknginClient ("127.0.0.1", 7080, 300) ;
     for(int i = 0; i < NUM_OF_MESSAGES; i++) {
       SampleEvent event = new SampleEvent("event-" + i, "event " + i) ;
       Message message = new Message("m" + i, event, true) ;
       message.getHeader().setTopic(SparknginClusterBuilder.TOPIC);
       client.send(message, 5000);
     }
-    client.waitAndClose(30000);
+    client.waitAndClose(15000);
     assertEquals(0, client.getErrorCount()) ;
     clusterBuilder.shell.execute("server metric");
     clusterBuilder.uninstall(); 

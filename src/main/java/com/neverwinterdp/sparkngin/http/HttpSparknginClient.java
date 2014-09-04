@@ -11,53 +11,53 @@ import java.util.concurrent.TimeoutException;
 import com.neverwinterdp.message.Message;
 import com.neverwinterdp.netty.http.client.AsyncHttpClient;
 import com.neverwinterdp.netty.http.client.ResponseHandler;
-import com.neverwinterdp.sparkngin.SendAck;
+import com.neverwinterdp.sparkngin.Ack;
 import com.neverwinterdp.util.JSONSerializer;
 
-public class HttpMessageClient {
+public class HttpSparknginClient {
   private AsyncHttpClient client ;
-  private LinkedHashMap<String, Message> messages ;
+  private LinkedHashMap<String, Message> waitingAckMessages ;
   private int bufferSize ;
   private int errorCount ;
   
-  public HttpMessageClient(String host, int port, int bufferSize) throws Exception {
+  public HttpSparknginClient(String host, int port, int bufferSize) throws Exception {
     client = new AsyncHttpClient (host, port, new MessageResponseHandler()) ;
     this.bufferSize = bufferSize ;
-    messages = new LinkedHashMap<String, Message>() ;
+    waitingAckMessages = new LinkedHashMap<String, Message>() ;
   }
   
   public int getErrorCount() { return errorCount ;}
   
   public void send(Message message, long timeout) throws Exception {
-    synchronized(messages) {
-      if(messages.size() >= bufferSize) {
-        messages.wait(timeout);
-        if(messages.size() >= bufferSize) {
+    synchronized(waitingAckMessages) {
+      if(waitingAckMessages.size() >= bufferSize) {
+        waitingAckMessages.wait(timeout);
+        if(waitingAckMessages.size() >= bufferSize) {
           throw new TimeoutException("fail to send the message in " + timeout + "ms") ;
         }
       }
       client.post("/message", message);
       String messageId = message.getHeader().getKey() ;
-      messages.put(messageId, message) ;
+      waitingAckMessages.put(messageId, message) ;
     }
   }
   
-  public void onFailedMessage(SendAck ack, Message message) {
+  public void onFailedMessage(Ack ack, Message message) {
     errorCount++ ;
     System.out.println("Failed message: " + ack.getMessageId() + ", message = " + ack.getMessage());
   }
   
   public Map<String, Message> getWaitingMessages() { 
-    return this.messages ;
+    return this.waitingAckMessages ;
   }
   
   public void waitAndClose(long waitTime) throws InterruptedException {
-    if(messages.size() > 0) { 
-      synchronized(messages) {
+    if(waitingAckMessages.size() > 0) { 
+      synchronized(waitingAckMessages) {
         long stopTime = System.currentTimeMillis() + waitTime ;
-        while(stopTime > System.currentTimeMillis() && messages.size() > 0) {
+        while(stopTime > System.currentTimeMillis() && waitingAckMessages.size() > 0) {
           long timeToWait = stopTime - System.currentTimeMillis() ;
-          messages.wait(timeToWait);
+          waitingAckMessages.wait(timeToWait);
         }
       }
     }
@@ -65,8 +65,8 @@ public class HttpMessageClient {
   }
   
   public void close() {
-    if(messages.size() > 0) {
-      throw new RuntimeException("There are " + messages.size() + " messages waitting for ack") ;
+    if(waitingAckMessages.size() > 0) {
+      throw new RuntimeException("There are " + waitingAckMessages.size() + " messages waitting for ack") ;
     }
     client.close(); 
   }
@@ -76,15 +76,15 @@ public class HttpMessageClient {
       if(response instanceof HttpContent) {
         HttpContent content = (HttpContent) response;
         String json = content.content().toString(CharsetUtil.UTF_8);
-        SendAck ack = JSONSerializer.INSTANCE.fromString(json, SendAck.class) ;
+        Ack ack = JSONSerializer.INSTANCE.fromString(json, Ack.class) ;
         String messageId = (String) ack.getMessageId() ;
-        Message message = messages.get(messageId) ;
-        if(!SendAck.Status.OK.equals(ack.getStatus())) {
+        Message message = waitingAckMessages.get(messageId) ;
+        if(!Ack.Status.OK.equals(ack.getStatus())) {
           onFailedMessage(ack, message) ;
         }
-        synchronized(messages) {
-          messages.remove(messageId) ;
-          messages.notify() ;
+        synchronized(waitingAckMessages) {
+          waitingAckMessages.remove(messageId) ;
+          waitingAckMessages.notify() ;
         }
       }
     }

@@ -1,4 +1,4 @@
-package com.neverwinterdp.server.http.pixel;
+package com.neverwinterdp.server.http.pixel.old;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,7 +9,7 @@ import org.junit.Test;
 import com.neverwinterdp.netty.http.client.AsyncHttpClient;
 import com.neverwinterdp.server.Server;
 import com.neverwinterdp.server.shell.Shell;
-import com.neverwinterdp.sparkngin.http.NullDevMessageForwarder;
+import com.neverwinterdp.sparkngin.NullDevMessageForwarder;
 
 /**
  * Tests the connection between PixelRouteHandler and Sparkngin

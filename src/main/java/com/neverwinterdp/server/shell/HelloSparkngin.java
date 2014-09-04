@@ -2,7 +2,7 @@ package com.neverwinterdp.server.shell;
 
 import com.beust.jcommander.Parameter;
 import com.neverwinterdp.message.Message;
-import com.neverwinterdp.sparkngin.http.HttpMessageClient;
+import com.neverwinterdp.sparkngin.http.HttpSparknginClient;
 
 public class HelloSparkngin {
   static public class Options {
@@ -23,7 +23,7 @@ public class HelloSparkngin {
   }
 
   public void run(final Options options) throws Exception {
-    final HttpMessageClient client = new HttpMessageClient (options.host, options.port,300) ;
+    final HttpSparknginClient client = new HttpSparknginClient (options.host, options.port,300) ;
     for(int i = 0; i < options.numMessage; i++) {
       Message message = new Message("m" + i, new byte[1024], true) ;
       message.getHeader().setTopic(options.topic);

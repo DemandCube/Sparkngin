@@ -8,6 +8,8 @@ import com.codahale.metrics.Timer;
 import com.neverwinterdp.message.Message;
 import com.neverwinterdp.netty.http.HttpServer;
 import com.neverwinterdp.netty.http.client.AsyncHttpClient;
+import com.neverwinterdp.sparkngin.NullDevMessageForwarder;
+import com.neverwinterdp.sparkngin.Sparkngin;
 import com.neverwinterdp.util.FileUtil;
 import com.neverwinterdp.util.monitor.ApplicationMonitor;
 import com.neverwinterdp.util.monitor.ComponentMonitor;
@@ -21,18 +23,18 @@ public class SparknginHttpPerformanceTest {
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties");
   }
 
-  private NullDevMessageForwarder forwarder;
   private HttpServer server;
   private ApplicationMonitor appMonitor ;
   
   @Before
   public void setup() throws Exception {
     FileUtil.removeIfExist("build/queue", false);
-    forwarder = new NullDevMessageForwarder();
+    NullDevMessageForwarder forwarder = new NullDevMessageForwarder();
     server = new HttpServer();
     server.setPort(7080);
     appMonitor = new ApplicationMonitor();
-    server.add("/message", new MessageRouteHandler(appMonitor, forwarder, "build/queue/data"));
+    Sparkngin sparkngin = new Sparkngin(appMonitor, forwarder, "build/queue/data") ;
+    server.add("/message", new MessageRouteHandler(sparkngin));
     server.startAsDeamon();
     Thread.sleep(2000);
   }
@@ -88,7 +90,7 @@ public class SparknginHttpPerformanceTest {
     
     public void run() {
       try {
-        HttpMessageClient mclient = new HttpMessageClient("127.0.0.1", 7080, 500);
+        HttpSparknginClient mclient = new HttpSparknginClient("127.0.0.1", 7080, 500);
         int hashCode = hashCode();
         for(int i = 0; i < NUM_OF_MESSAGES; i++) {
           Message message = new Message("m-" + hashCode + "-"+ i, new byte[1024], true);

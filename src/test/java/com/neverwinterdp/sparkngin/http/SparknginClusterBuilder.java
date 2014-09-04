@@ -2,6 +2,7 @@ package com.neverwinterdp.sparkngin.http;
 
 import com.neverwinterdp.server.Server;
 import com.neverwinterdp.server.shell.Shell;
+import com.neverwinterdp.sparkngin.NullDevMessageForwarder;
 import com.neverwinterdp.util.FileUtil;
 /**
  * @author Tuan Nguyen

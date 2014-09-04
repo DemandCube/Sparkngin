@@ -5,14 +5,12 @@ import org.slf4j.Logger;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.neverwinterdp.netty.http.HttpServer;
-import com.neverwinterdp.server.http.pixel.PixelRouteHandler;
 import com.neverwinterdp.netty.http.StaticFileHandler;
 import com.neverwinterdp.server.module.ModuleProperties;
 import com.neverwinterdp.server.service.AbstractService;
-import com.neverwinterdp.util.FileUtil;
+import com.neverwinterdp.sparkngin.Sparkngin;
 import com.neverwinterdp.util.JSONSerializer;
 import com.neverwinterdp.util.LoggerFactory;
-import com.neverwinterdp.util.monitor.ApplicationMonitor;
 
 public class SparknginClusterHttpService extends AbstractService {
   private LoggerFactory loggerFactory ;
@@ -20,9 +18,7 @@ public class SparknginClusterHttpService extends AbstractService {
   private HttpServer server ;
   
   @Inject
-  private ApplicationMonitor appMonitor ;
-  
-  private MessageForwarder messageForwarder ;
+  private Sparkngin sparkngin ;
   
   private SparknginClusterHttpServiceInfo serviceInfo ;
   
@@ -35,13 +31,10 @@ public class SparknginClusterHttpService extends AbstractService {
     logger = factory.getLogger(SparknginClusterHttpService.class) ;
     this.serviceInfo = serviceInfo ;
     if(moduleProperties.isDataDrop()) cleanup() ;
-    
-    Class<MessageForwarder> type = (Class<MessageForwarder>) Class.forName(serviceInfo.getForwarderClass()) ;
-    messageForwarder = container.getInstance(type) ;
   }
   
   public boolean cleanup() throws Exception {
-    FileUtil.removeIfExist(serviceInfo.getQueueDir(), false);
+    sparkngin.cleanup() ;
     logger.info("Clean queue data directory");
     return true ;
   }
@@ -58,7 +51,7 @@ public class SparknginClusterHttpService extends AbstractService {
       fileHandler.setLogger(loggerFactory.getLogger(StaticFileHandler.class)) ;
       server.setDefault(fileHandler) ;
     }
-    server.add("/message", new MessageRouteHandler(appMonitor, messageForwarder, serviceInfo.getQueueDir()));
+    server.add("/message", new MessageRouteHandler(sparkngin));
     server.startAsDeamon();
     logger.info("Finish start()");
   }

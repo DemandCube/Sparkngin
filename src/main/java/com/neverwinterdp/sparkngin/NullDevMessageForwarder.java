@@ -1,4 +1,4 @@
-package com.neverwinterdp.sparkngin.http;
+package com.neverwinterdp.sparkngin;
 
 import com.neverwinterdp.message.Message;
 

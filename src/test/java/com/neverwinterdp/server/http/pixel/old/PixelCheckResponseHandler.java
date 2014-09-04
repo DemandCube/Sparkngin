@@ -1,4 +1,4 @@
-package com.neverwinterdp.server.http.pixel;
+package com.neverwinterdp.server.http.pixel.old;
 
 import static org.junit.Assert.assertEquals;
 import io.netty.buffer.ByteBuf;
@@ -6,6 +6,7 @@ import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpResponse;
 
 import com.neverwinterdp.netty.http.client.ResponseHandler;
+import com.neverwinterdp.server.http.pixel.old.PixelRouteHandler;
 
 /**
  * Handler to make sure when HTTP response is received,
@@ -21,12 +22,19 @@ public class PixelCheckResponseHandler implements ResponseHandler {
     ByteBuf buf = content.content();
     try{
       assertEquals(PixelRouteHandler.getImageBytes(), buf);
-    } catch(AssertionError e){
+    }
+    catch(AssertionError e){
       failure++;
+      e.printStackTrace();
     }
   }
   
-  public int getCount(){ return this.count; }
+  public int getCount(){
+    return this.count;
+  }
   
-  public int getFailure(){ return this.failure; }
+  public int getFailure(){
+    return this.failure;
+  }
+  
 }

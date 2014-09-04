@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.neverwinterdp.message.Message;
 import com.neverwinterdp.queuengin.kafka.KafkaMessageProducer;
-import com.neverwinterdp.sparkngin.SendAck;
+import com.neverwinterdp.sparkngin.Ack;
 import com.neverwinterdp.util.IOUtil;
 import com.neverwinterdp.util.JSONSerializer;
 import com.neverwinterdp.util.monitor.ApplicationMonitor;
@@ -38,7 +38,7 @@ public class MessageServlet extends HttpServlet {
 
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     resp.setContentType("application/json");
-    SendAck ack = new SendAck() ;
+    Ack ack = new Ack() ;
     try {
       String topic = getTopic(req) ;
       InputStream is = req.getInputStream() ;
@@ -49,9 +49,9 @@ public class MessageServlet extends HttpServlet {
         message.addTrace("JSONMessageServlet", "forward by http server, ip = " + req.getLocalAddr() + ", port " + req.getLocalPort()) ;
       }
       producer.send(topic, message) ;
-      ack.setStatus(SendAck.Status.OK) ;
+      ack.setStatus(Ack.Status.OK) ;
     } catch (Exception e) {
-      ack.setStatus(SendAck.Status.ERROR) ;
+      ack.setStatus(Ack.Status.ERROR) ;
       ack.setMessage(e.getMessage()) ;
     }
     resp.setStatus(HttpServletResponse.SC_OK);

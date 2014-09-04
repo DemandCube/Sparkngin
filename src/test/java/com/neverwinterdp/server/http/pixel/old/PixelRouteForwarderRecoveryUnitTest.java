@@ -1,4 +1,4 @@
-package com.neverwinterdp.server.http.pixel;
+package com.neverwinterdp.server.http.pixel.old;
 
 import static org.junit.Assert.assertEquals;
 import io.netty.handler.codec.http.DefaultHttpRequest;
@@ -10,21 +10,21 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.neverwinterdp.server.Server;
+import com.neverwinterdp.server.http.pixel.RequestLog;
+import com.neverwinterdp.server.http.pixel.old.PixelLogForwarder;
 import com.neverwinterdp.server.shell.Shell;
 
 /**
  * Test to make sure that if sparkngin is down, no messages are lost
- * Sends too many messages for the buffer to handle, makes sure there are no failures and the 
- * correct number of messages are sent
  * @author Richard Duarte
  */
-public class PixelRouteForwarderRecoveryOverflowUnitTest {
+public class PixelRouteForwarderRecoveryUnitTest {
   static {
     System.setProperty("app.dir", "build/cluster") ;
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
   }
   
-  static int port = 9199;
+  static int port = 9195;
   static Server server ;
   static Shell shell;
   static PixelLogForwarder forwarder;
@@ -46,17 +46,19 @@ public class PixelRouteForwarderRecoveryOverflowUnitTest {
   @Test
   public void testBufferedMessagesGetSentAfterSparknginLaunches(){
     HttpSnoop.resetHits();
-    forwarder = new PixelLogForwarder("127.0.0.1",port, "/message", 100);
-    int numMessages=120;
+    forwarder = new PixelLogForwarder("127.0.0.1",port,"/message",100);
+    int numMessages=100;
     for(int i=0; i<numMessages; i++){
       forwarder.forward(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
     }
-    assertEquals(0,HttpSnoop.getHits());
     try {
-      Thread.sleep(8000);
+      Thread.sleep(2000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
+
+    assertEquals(0,HttpSnoop.getHits());
+    
     //Start HTTP server
     shell.exec(
         "module install " +
@@ -66,7 +68,7 @@ public class PixelRouteForwarderRecoveryOverflowUnitTest {
         " -Phttp:route.snoop.path=/message" +
         " --member-name webserver --autostart --module Http"
     ) ;
-
+    
     //Could take up to 6 seconds to reconnect
     //Plus need time to allow buffer to catch up
     try {
@@ -74,21 +76,16 @@ public class PixelRouteForwarderRecoveryOverflowUnitTest {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    
-    //Make sure only the size of the buffer is sent
-    assertEquals(100,HttpSnoop.getHits());
-    for(int i=0; i<100; i++) {
+    for(int i=0; i<numMessages; i++){
       forwarder.forward(new RequestLog(new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "test")));
     }
-    
-    //Give queue chance to catch up again
     try {
       Thread.sleep(2000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
     
-    //Queue is size 100, plus the next 100 messages, make sure they're all seen
-    assertEquals(200,HttpSnoop.getHits());
+    System.err.println(HttpSnoop.getHits());
+    assertEquals(numMessages*2,HttpSnoop.getHits());
   }
 }

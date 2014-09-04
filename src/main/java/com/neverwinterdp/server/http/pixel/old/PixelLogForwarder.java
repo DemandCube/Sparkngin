@@ -1,4 +1,4 @@
-package com.neverwinterdp.server.http.pixel;
+package com.neverwinterdp.server.http.pixel.old;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.neverwinterdp.message.Message;
 import com.neverwinterdp.netty.http.client.AsyncHttpClient;
 import com.neverwinterdp.netty.http.client.DumpResponseHandler;
+import com.neverwinterdp.server.http.pixel.RequestLog;
 import com.neverwinterdp.util.JSONSerializer;
 
 /**
