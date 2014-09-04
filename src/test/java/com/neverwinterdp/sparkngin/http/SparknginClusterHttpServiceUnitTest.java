@@ -20,7 +20,7 @@ public class SparknginClusterHttpServiceUnitTest {
   static public void setup() throws Exception {
     FileUtil.removeIfExist("build/cluster", false);
     clusterBuilder = new SparknginClusterBuilder() ;
-    clusterBuilder.start(); 
+    clusterBuilder.init(); 
   }
 
   @AfterClass
@@ -36,7 +36,7 @@ public class SparknginClusterHttpServiceUnitTest {
     for(int i = 0; i < NUM_OF_MESSAGES; i++) {
       SampleEvent event = new SampleEvent("event-" + i, "event " + i) ;
       Message message = new Message("m" + i, event, true) ;
-      message.getHeader().setTopic(SparknginClusterBuilder.TOPIC_NAME);
+      message.getHeader().setTopic(SparknginClusterBuilder.TOPIC);
       client.send(message, 5000);
     }
     client.waitAndClose(30000);
