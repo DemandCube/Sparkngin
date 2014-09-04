@@ -64,7 +64,7 @@ public class PixelRouteForwarderRecoveryUnitTest {
         "module install " +
         " -Phttp:port="+Integer.toString(port) +
         " -Phttp:route.names=snoop" +
-        " -Phttp:route.snoop.handler=com.neverwinterdp.server.http.pixel.HttpSnoop" +
+        " -Phttp:route.snoop.handler=com.neverwinterdp.server.http.pixel.old.HttpSnoop" +
         " -Phttp:route.snoop.path=/message" +
         " --member-name webserver --autostart --module Http"
     ) ;

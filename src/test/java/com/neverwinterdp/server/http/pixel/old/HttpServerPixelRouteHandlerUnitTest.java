@@ -35,7 +35,7 @@ public class HttpServerPixelRouteHandlerUnitTest {
         "module install " +
         " -Phttp:port="+Integer.toString(httpport) +
         " -Phttp:route.names=pixel" +
-        " -Phttp:route.pixel.handler=com.neverwinterdp.server.http.pixel.PixelRouteHandler" +
+        " -Phttp:route.pixel.handler=com.neverwinterdp.server.http.pixel.old.PixelRouteHandler" +
         " -Phttp:route.pixel.path=/pixel" +
         " --member-name webserver --autostart --module Http"
     ) ;

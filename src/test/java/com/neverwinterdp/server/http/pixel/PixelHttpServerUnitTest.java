@@ -48,11 +48,12 @@ public class PixelHttpServerUnitTest {
   public void testPixel() throws Exception {
     PixelCheckResponseHandler handler = new PixelCheckResponseHandler();
     AsyncHttpClient client = new AsyncHttpClient ("127.0.0.1", server.getPort(), handler) ;
-    int LOOP = 1000 ;
+    int LOOP = 1000;
     
     for(int i = 0; i < LOOP; i++) {
       client.get("/pixel") ;
     }
+    //Wait to make sure all the ack are return to the client
     Thread.sleep(5000);
     //Make sure testCount responses have been received
     assertEquals(LOOP, handler.getCount());

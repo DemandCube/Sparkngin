@@ -44,7 +44,7 @@ public class HttpServerPixelRouteHandlerSparknginIntegrationUnitTest {
         "module install " +
         " -Phttp:port="+Integer.toString(httpport) +
         " -Phttp:route.names=pixel" +
-        " -Phttp:route.pixel.handler=com.neverwinterdp.server.http.pixel.PixelRouteHandler" +
+        " -Phttp:route.pixel.handler=com.neverwinterdp.server.http.pixel.old.PixelRouteHandler" +
         " -Phttp:route.pixel.path=/pixel" +
         " -Phttp:route.pixel.sparkngin.connect=http://127.0.0.1:"+Integer.toString(sparkport) +
         " --member-name webserver --autostart --module Http"
