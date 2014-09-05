@@ -18,13 +18,16 @@ public class HttpSparknginClient {
   private AsyncHttpClient client ;
   private LinkedHashMap<String, Message> waitingAckMessages ;
   private int bufferSize ;
-  private int errorCount ;
+  private int sendCount = 0;
+  private int errorCount = 0;
   
   public HttpSparknginClient(String host, int port, int bufferSize) throws Exception {
     client = new AsyncHttpClient (host, port, new MessageResponseHandler()) ;
     this.bufferSize = bufferSize ;
     waitingAckMessages = new LinkedHashMap<String, Message>() ;
   }
+  
+  public int getSendCount() { return this.sendCount ; }
   
   public int getErrorCount() { return errorCount ;}
   
@@ -37,6 +40,7 @@ public class HttpSparknginClient {
         }
       }
       client.post("/message", message);
+      sendCount++ ;
       String messageId = message.getHeader().getKey() ;
       waitingAckMessages.put(messageId, message) ;
     }
@@ -61,12 +65,12 @@ public class HttpSparknginClient {
         }
       }
     }
-    client.close();
+    close();
   }
   
   public void close() {
     if(waitingAckMessages.size() > 0) {
-      throw new RuntimeException("There are " + waitingAckMessages.size() + " messages waitting for ack") ;
+      System.err.println("There are " + waitingAckMessages.size() + " messages waitting for ack") ;
     }
     client.close(); 
   }

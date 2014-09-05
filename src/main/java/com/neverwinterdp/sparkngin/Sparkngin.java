@@ -94,7 +94,8 @@ public class Sparkngin {
   
   public class ForwarderThread extends Thread {
     public ForwarderThread() {
-      super("SparknginForwarderThread") ;
+      super("SparknginForwarderThread");
+      setPriority(Thread.MAX_PRIORITY);
     }
     
     public void run() {
