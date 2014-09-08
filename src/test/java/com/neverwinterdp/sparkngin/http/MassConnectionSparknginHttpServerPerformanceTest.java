@@ -31,9 +31,8 @@ public class MassConnectionSparknginHttpServerPerformanceTest {
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
   }
 
-  
   int NUM_OF_SERVER_THREAD = 5 ;
-  int NUM_OF_CONCURRENT_WORKERS = 50 * NUM_OF_SERVER_THREAD ;
+  int NUM_OF_CONCURRENT_WORKERS = 25 * NUM_OF_SERVER_THREAD ;
   int NUM_OF_WORKERS = 2 * NUM_OF_CONCURRENT_WORKERS ;
   int NUM_OF_MESSAGE_PER_WORKER = 1000 ;
   int EXPECT_MESSAGES_SENT = NUM_OF_WORKERS * NUM_OF_MESSAGE_PER_WORKER ; 

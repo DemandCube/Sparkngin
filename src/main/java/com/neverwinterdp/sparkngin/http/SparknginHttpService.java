@@ -12,7 +12,7 @@ import com.neverwinterdp.sparkngin.Sparkngin;
 import com.neverwinterdp.util.JSONSerializer;
 import com.neverwinterdp.util.LoggerFactory;
 
-public class SparknginClusterHttpService extends AbstractService {
+public class SparknginHttpService extends AbstractService {
   private LoggerFactory loggerFactory ;
   private Logger logger ;
   private HttpServer server ;
@@ -28,7 +28,7 @@ public class SparknginClusterHttpService extends AbstractService {
                    ModuleProperties moduleProperties,
                    SparknginClusterHttpServiceInfo serviceInfo) throws Exception {
     this.loggerFactory = factory ;
-    logger = factory.getLogger(SparknginClusterHttpService.class) ;
+    logger = factory.getLogger(SparknginHttpService.class) ;
     this.serviceInfo = serviceInfo ;
     if(moduleProperties.isDataDrop()) cleanup() ;
   }
@@ -41,9 +41,8 @@ public class SparknginClusterHttpService extends AbstractService {
   
   public void start() throws Exception {
     logger.info("Start start()");
-    logger.info("Properties: \n" + JSONSerializer.INSTANCE.toString(serviceInfo)) ;
-    
-    server = new HttpServer();
+    logger.info("Properties:\n" + JSONSerializer.INSTANCE.toString(serviceInfo)) ;
+    server = new HttpServer() ;
     server.setPort(serviceInfo.getHttpListenPort()) ;
     server.setLoggerFactory(loggerFactory) ;
     if(serviceInfo.getWwwDir() != null) {
@@ -51,7 +50,9 @@ public class SparknginClusterHttpService extends AbstractService {
       fileHandler.setLogger(loggerFactory.getLogger(StaticFileHandler.class)) ;
       server.setDefault(fileHandler) ;
     }
+    
     server.add("/message", new MessageRouteHandler(sparkngin));
+    server.add("/tracking/pixel", new TrackingPixelRouteHandler(sparkngin));
     server.startAsDeamon();
     logger.info("Finish start()");
   }

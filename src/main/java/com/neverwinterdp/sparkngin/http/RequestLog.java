@@ -1,4 +1,4 @@
-package com.neverwinterdp.server.http.pixel;
+package com.neverwinterdp.sparkngin.http;
 
 import io.netty.handler.codec.http.HttpRequest;
 

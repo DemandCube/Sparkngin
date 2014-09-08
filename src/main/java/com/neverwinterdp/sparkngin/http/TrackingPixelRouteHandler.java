@@ -1,24 +1,31 @@
-package com.neverwinterdp.server.http.pixel;
+package com.neverwinterdp.sparkngin.http;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.Cookie;
+import io.netty.handler.codec.http.CookieDecoder;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.ServerCookieEncoder;
+import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 
+import java.util.Date;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.neverwinterdp.message.Message;
 import com.neverwinterdp.netty.http.RouteHandlerGeneric;
 import com.neverwinterdp.sparkngin.Sparkngin;
 import com.neverwinterdp.util.JSONSerializer;
-
 /**
  * Route to handle returning a 1x1 100% transparent png
  * Responds to GET requests in HTTP
  * @author Richard Duarte
  */
-public class PixelRouteHandler extends RouteHandlerGeneric {
+public class TrackingPixelRouteHandler extends RouteHandlerGeneric {
 //This is a byte array for a 1x1 100% transparent .png image 
   final static ByteBuf IMAGE = Unpooled.wrappedBuffer(
                     new byte[]
@@ -47,7 +54,7 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
   private Sparkngin sparkngin ;
   private AtomicLong idTracker  = new AtomicLong();
   
-  public PixelRouteHandler(Sparkngin sparkngin) {
+  public TrackingPixelRouteHandler(Sparkngin sparkngin) {
     this.sparkngin = sparkngin ;
   }
   
@@ -63,17 +70,44 @@ public class PixelRouteHandler extends RouteHandlerGeneric {
    */
   protected void doGet(ChannelHandlerContext ctx, HttpRequest httpReq) {
     //Return Pixel to client
-    writeContent(ctx, httpReq, IMAGE.retain(), "image/png");
-    ctx.flush() ;
-    
-    RequestLog log = new RequestLog(httpReq);
+    FullHttpResponse response = this.createResponse(httpReq, IMAGE.retain(), "image/png") ;
+    setCookie(httpReq, response) ;
+    write(ctx, httpReq, response);
+    sparknginLog(httpReq, response) ;
+  }
+  
+  void sparknginLog(HttpRequest request, FullHttpResponse response) {
+    RequestLog log = new RequestLog(request);
     String data = JSONSerializer.INSTANCE.toString(log) ;
     //Send request log to sparkngin
     Message message = new Message("id-" + idTracker.incrementAndGet(), data, false) ;
     message.getHeader().setTopic("log.pixel") ;
     sparkngin.push(message) ;
   }
-
   
+  void setCookie(HttpRequest request, FullHttpResponse response) {
+    // Encode the cookie.
+    String cookieString = request.headers().get(COOKIE);
+    if (cookieString != null) {
+      Set<Cookie> cookies = CookieDecoder.decode(cookieString);
+      if (!cookies.isEmpty()) {
+        // Reset the cookies if necessary.
+        for (Cookie cookie: cookies) {
+          if("visit-count".equals(cookie.getName())) {
+            int count = Integer.parseInt(cookie.getValue()) ;
+            cookie.setValue(Integer.toString(count + 1));
+            //System.out.println("Visit: " + count);
+          }
+          response.headers().add(SET_COOKIE, ServerCookieEncoder.encode(cookie));
+        }
+      }
+    } else {
+      // Browser sent no cookie.  Add some.
+      response.headers().add(SET_COOKIE, ServerCookieEncoder.encode("id", UUID.randomUUID().toString()));
+      response.headers().add(SET_COOKIE, ServerCookieEncoder.encode("visit-count", "1"));
+      response.headers().add(SET_COOKIE, ServerCookieEncoder.encode("first-visit-time", new Date().toString()));
+    }
+  }
+
   public static ByteBuf getImageBytes() { return IMAGE; }
 }
