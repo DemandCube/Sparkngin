@@ -52,7 +52,7 @@ public class SparknginHttpService extends AbstractService {
     }
     
     server.add("/message", new MessageRouteHandler(sparkngin));
-    server.add("/tracking/pixel", new TrackingPixelRouteHandler(sparkngin));
+    server.add("/tracking/site/*", new TrackingPixelRouteHandler(sparkngin));
     server.startAsDeamon();
     logger.info("Finish start()");
   }
