@@ -72,7 +72,7 @@ public class TrackingPixelRouteHandlerUnitTest {
     //TODO: the client current does not support the cookie. If we want to test the cookie. Need to enable this sleep
     //method and use the browser with http://localhost:8080/pixel to test. You can use browser header inspector to check
     //the cookie.
-    Thread.sleep(60000000);
+    //Thread.sleep(60000000);
   }
   
   /**
