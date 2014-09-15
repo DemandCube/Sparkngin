@@ -14,7 +14,7 @@ import com.neverwinterdp.netty.http.client.AsyncHttpClient;
 import com.neverwinterdp.sparkngin.NullDevMessageForwarder;
 import com.neverwinterdp.sparkngin.Sparkngin;
 import com.neverwinterdp.util.FileUtil;
-import com.neverwinterdp.util.monitor.ApplicationMonitor;
+import com.neverwinterdp.yara.MetricRegistry;
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
@@ -26,15 +26,15 @@ public class SparknginHttpServerUnitTest {
 
   private NullDevMessageForwarder forwarder ;
   private HttpServer server ;
-  private ApplicationMonitor appMonitor  ;
+  private MetricRegistry mRegistry  ;
   
   @Before
   public void setup() throws Exception {
     FileUtil.removeIfExist("build/queue", false) ;
     forwarder = new NullDevMessageForwarder() ;
     server = new HttpServer() ;
-    appMonitor = new ApplicationMonitor() ;
-    server.add("/message", new MessageRouteHandler(new Sparkngin(appMonitor, forwarder, "build/queue/data"))) ;
+    mRegistry = new MetricRegistry() ;
+    server.add("/message", new MessageRouteHandler(new Sparkngin(mRegistry, forwarder, "build/queue/data"))) ;
     server.setDefault(new StaticFileHandler(".")) ;
     server.startAsDeamon() ;
     Thread.sleep(2000) ;

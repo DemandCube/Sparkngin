@@ -14,9 +14,8 @@ import com.neverwinterdp.netty.http.client.AsyncHttpClient;
 import com.neverwinterdp.netty.http.client.ResponseHandler;
 import com.neverwinterdp.sparkngin.NullDevMessageForwarder;
 import com.neverwinterdp.sparkngin.Sparkngin;
-import com.neverwinterdp.sparkngin.http.TrackingPixelRouteHandler;
 import com.neverwinterdp.util.FileUtil;
-import com.neverwinterdp.util.monitor.ApplicationMonitor;
+import com.neverwinterdp.yara.MetricRegistry;
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
@@ -36,8 +35,8 @@ public class TrackingPixelRouteHandlerUnitTest {
   public void setup() throws Exception {
     FileUtil.removeIfExist("build/queue", false) ;
     forwarder = new NullDevMessageForwarder() ;
-    ApplicationMonitor appMonitor = new ApplicationMonitor() ;
-    Sparkngin sparkngin = new Sparkngin(appMonitor, forwarder, "build/queue/data") ;
+    MetricRegistry mRegistry = new MetricRegistry() ;
+    Sparkngin sparkngin = new Sparkngin(mRegistry, forwarder, "build/queue/data") ;
     server = new HttpServer() ;
     server.add("/pixel", new TrackingPixelRouteHandler(sparkngin)) ;
     server.startAsDeamon() ;

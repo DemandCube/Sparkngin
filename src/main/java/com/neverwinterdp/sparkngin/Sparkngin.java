@@ -1,6 +1,5 @@
 package com.neverwinterdp.sparkngin;
 
-import com.codahale.metrics.Timer;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.name.Named;
@@ -9,8 +8,8 @@ import com.neverwinterdp.server.module.ModuleProperties;
 import com.neverwinterdp.sparkngin.queue.Queue;
 import com.neverwinterdp.sparkngin.queue.Segment;
 import com.neverwinterdp.util.FileUtil;
-import com.neverwinterdp.util.monitor.ApplicationMonitor;
-import com.neverwinterdp.util.monitor.ComponentMonitor;
+import com.neverwinterdp.yara.MetricRegistry;
+import com.neverwinterdp.yara.Timer;
 
 public class Sparkngin {
   @Inject @Named("sparkngin:forwarder-class")
@@ -22,12 +21,12 @@ public class Sparkngin {
   private MessageForwarder forwarder ;
   private Queue<Message> queue ;
   private Thread forwarderThread ;
-  private ComponentMonitor monitor ;
+  private MetricRegistry mRegistry ;
   
   public Sparkngin()  {}
   
-  public Sparkngin(ApplicationMonitor appMonitor, MessageForwarder mforwarder, String storeDir) throws Exception {
-    this.monitor = appMonitor.createComponentMonitor(getClass()) ;
+  public Sparkngin(MetricRegistry mRegistry, MessageForwarder mforwarder, String storeDir) throws Exception {
+    this.mRegistry = mRegistry ;
     this.forwarder = mforwarder ;
     queue = new Queue<Message>(storeDir, 10000l) ;
     forwarderThread = new ForwarderThread() ;
@@ -35,8 +34,8 @@ public class Sparkngin {
   }
   
   @Inject
-  public void init(Injector container, ModuleProperties moduleProperties, ApplicationMonitor appMonitor) throws Exception {
-    this.monitor = appMonitor.createComponentMonitor(getClass()) ;
+  public void init(Injector container, ModuleProperties moduleProperties, MetricRegistry mRegistry) throws Exception {
+    this.mRegistry = mRegistry ;
     Class<MessageForwarder> type = (Class<MessageForwarder>) Class.forName(forwarderClass) ;
     forwarder = container.getInstance(type) ;
     if(queueDir == null) {
@@ -62,7 +61,7 @@ public class Sparkngin {
    * @throws Exception
    */
   public Ack push(Message message) {
-    Timer.Context ctx = monitor.timer("push").time() ;
+    Timer.Context ctx = mRegistry.timer(Sparkngin.class.getSimpleName(), "push").time() ;
     Ack ack = new Ack() ;
     try {
       queue.write(message);
@@ -82,7 +81,7 @@ public class Sparkngin {
    * @throws Exception
    */
   public void forward(Message message) throws Exception {
-    Timer.Context forwardCtx = monitor.timer("forward").time() ;
+    Timer.Context forwardCtx = mRegistry.timer(Sparkngin.class.getSimpleName(), "forward").time() ;
     forwarder.forward(message);
     forwardCtx.close();
   }
@@ -105,7 +104,7 @@ public class Sparkngin {
           if(segment != null) {
             segment.open(); 
             while(segment.hasNext()) {
-              Timer.Context readCtx = monitor.timer("read(Message)").time() ;
+              Timer.Context readCtx = mRegistry.timer(Sparkngin.class.getSimpleName(), "read").time() ;
               Message message = segment.next() ;
               readCtx.close(); 
               forward(message) ;

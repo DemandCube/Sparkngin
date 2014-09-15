@@ -21,7 +21,7 @@ import com.neverwinterdp.netty.http.client.ResponseHandler;
 import com.neverwinterdp.sparkngin.NullDevMessageForwarder;
 import com.neverwinterdp.sparkngin.Sparkngin;
 import com.neverwinterdp.util.FileUtil;
-import com.neverwinterdp.util.monitor.ApplicationMonitor;
+import com.neverwinterdp.yara.MetricRegistry;
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
@@ -39,7 +39,7 @@ public class MassConnectionSparknginHttpServerPerformanceTest {
   
   private NullDevMessageForwarder forwarder ;
   private HttpServer server ;
-  private ApplicationMonitor appMonitor  ;
+  private MetricRegistry mRegistry  ;
   private AtomicLong messageCounter = new AtomicLong() ;
 
   @Before
@@ -48,8 +48,8 @@ public class MassConnectionSparknginHttpServerPerformanceTest {
     forwarder = new NullDevMessageForwarder() ;
     server = new HttpServer() ;
     server.setNumberOfWorkers(NUM_OF_SERVER_THREAD);
-    appMonitor = new ApplicationMonitor() ;
-    server.add("/message", new MessageRouteHandler(new Sparkngin(appMonitor, forwarder, "build/queue/data"))) ;
+    mRegistry = new MetricRegistry() ;
+    server.add("/message", new MessageRouteHandler(new Sparkngin(mRegistry, forwarder, "build/queue/data"))) ;
     server.setDefault(new StaticFileHandler(".")) ;
     server.startAsDeamon() ;
     Thread.sleep(2000) ;

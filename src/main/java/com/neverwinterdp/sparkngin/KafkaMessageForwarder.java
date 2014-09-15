@@ -10,8 +10,7 @@ import com.neverwinterdp.message.Message;
 import com.neverwinterdp.queuengin.kafka.KafkaMessageProducer;
 import com.neverwinterdp.util.JSONSerializer;
 import com.neverwinterdp.util.LoggerFactory;
-import com.neverwinterdp.util.monitor.ApplicationMonitor;
-import com.neverwinterdp.util.monitor.ComponentMonitor;
+import com.neverwinterdp.yara.MetricRegistry;
 
 public class KafkaMessageForwarder implements MessageForwarder {
   private Logger logger ;
@@ -19,14 +18,13 @@ public class KafkaMessageForwarder implements MessageForwarder {
 
   @Inject
   public void init(LoggerFactory lfactory,
-                   ApplicationMonitor appMonitor, 
+                   MetricRegistry mRegistry, 
                    @Named("kafka-producerProperties") Map<String, String> producerProps,
                    @Named("kafka-producer:metadata.broker.list") String brokerList) {
     logger = lfactory.getLogger(KafkaMessageForwarder.class) ;
     logger.info("Start init()");
-    ComponentMonitor monitor = appMonitor.createComponentMonitor(KafkaMessageProducer.class) ;
     logger.info("Kafka Producer Properties: \n" + JSONSerializer.INSTANCE.toString(producerProps));
-    producer = new KafkaMessageProducer(producerProps, monitor, brokerList) ;
+    producer = new KafkaMessageProducer(producerProps, mRegistry, brokerList) ;
     logger.info("Finish init()");
   }
   

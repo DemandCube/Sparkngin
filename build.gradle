@@ -58,6 +58,7 @@ dependencies {
   compile group: 'com.neverwinterdp', name: 'commons.api', version: '1.0-SNAPSHOT'
   compile group: 'com.neverwinterdp', name: 'commons.netty', version: '1.0-SNAPSHOT'
   compile group: 'com.neverwinterdp', name: 'commons.cluster', version: '1.0-SNAPSHOT'
+  compile group: 'com.neverwinterdp', name: 'commons.yara', version: '1.0-SNAPSHOT'
   compile group: 'com.neverwinterdp', name: 'commons.zookeeper', version: '1.0-SNAPSHOT'
 
   compile group: 'com.neverwinterdp', name: 'queuengin', version: '1.0-SNAPSHOT'
@@ -116,7 +117,6 @@ def doRelease(String releaseDir) {
     "kafka", "scala-library",
     'zookeeper', 'zkclient',
     "netty-all", 'jzlib', 'chronicle', "lang-6.1.4",
-    "metrics-core", "metrics-json", "metrics-annotation",
     "log4j", "slf4j-api", "slf4j-log4j12"
   ] 
 

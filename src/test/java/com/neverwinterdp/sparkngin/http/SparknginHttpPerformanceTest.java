@@ -4,16 +4,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.codahale.metrics.Timer;
 import com.neverwinterdp.message.Message;
 import com.neverwinterdp.netty.http.HttpServer;
-import com.neverwinterdp.netty.http.client.AsyncHttpClient;
 import com.neverwinterdp.sparkngin.NullDevMessageForwarder;
 import com.neverwinterdp.sparkngin.Sparkngin;
 import com.neverwinterdp.util.FileUtil;
-import com.neverwinterdp.util.monitor.ApplicationMonitor;
-import com.neverwinterdp.util.monitor.ComponentMonitor;
-import com.neverwinterdp.util.monitor.snapshot.MetricFormater;
+import com.neverwinterdp.yara.MetricPrinter;
+import com.neverwinterdp.yara.MetricRegistry;
+import com.neverwinterdp.yara.Timer;
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
@@ -24,7 +22,7 @@ public class SparknginHttpPerformanceTest {
   }
 
   private HttpServer server;
-  private ApplicationMonitor appMonitor ;
+  private MetricRegistry mRegistry ;
   
   @Before
   public void setup() throws Exception {
@@ -32,8 +30,8 @@ public class SparknginHttpPerformanceTest {
     NullDevMessageForwarder forwarder = new NullDevMessageForwarder();
     server = new HttpServer();
     server.setPort(7080);
-    appMonitor = new ApplicationMonitor();
-    Sparkngin sparkngin = new Sparkngin(appMonitor, forwarder, "build/queue/data") ;
+    mRegistry = new MetricRegistry();
+    Sparkngin sparkngin = new Sparkngin(mRegistry, forwarder, "build/queue/data") ;
     server.add("/message", new MessageRouteHandler(sparkngin));
     server.startAsDeamon();
     Thread.sleep(2000);
@@ -55,10 +53,10 @@ public class SparknginHttpPerformanceTest {
   
   public void runProfile(int numOfThread, int numOfMessagePerThread) throws Exception {
     long start = System.currentTimeMillis();
-    appMonitor.remove("*");
+    mRegistry.remove("*");
     Thread[] thread = new Thread[numOfThread];
     for(int i = 0; i < thread.length; i++) {
-      thread[i] = new Thread(new Producer(appMonitor, numOfMessagePerThread));
+      thread[i] = new Thread(new Producer(mRegistry, numOfMessagePerThread));
       thread[i].start(); 
     }
     boolean finished = false;
@@ -75,17 +73,16 @@ public class SparknginHttpPerformanceTest {
     }
     long elapsed = System.currentTimeMillis() - start;
     System.out.println("\nRun test in  " + elapsed + "ms");
-    MetricFormater formater = new MetricFormater();
-    System.out.println(formater.format(appMonitor.snapshot().getRegistry().getTimers()));
+    new MetricPrinter().print(mRegistry) ;
   }
   
   static public class Producer implements Runnable {
     int NUM_OF_MESSAGES;
-    ComponentMonitor clientMonitor;
+    MetricRegistry clientMonitor;
     
-    public Producer(ApplicationMonitor appMonitor, int num) {
+    public Producer(MetricRegistry appMonitor, int num) {
       NUM_OF_MESSAGES = num;
-      clientMonitor = appMonitor.createComponentMonitor(AsyncHttpClient.class);
+      clientMonitor = appMonitor;
     }
     
     public void run() {
@@ -94,7 +91,7 @@ public class SparknginHttpPerformanceTest {
         int hashCode = hashCode();
         for(int i = 0; i < NUM_OF_MESSAGES; i++) {
           Message message = new Message("m-" + hashCode + "-"+ i, new byte[1024], true);
-          Timer.Context ctx = clientMonitor.timer("post()").time();
+          Timer.Context ctx = clientMonitor.timer("sparkngin", "client", "send").time();
           mclient.send(message, 5000);
           ctx.stop();
         }

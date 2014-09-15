@@ -2,11 +2,10 @@ package com.neverwinterdp.sparkngin.queue;
 
 import org.junit.Test;
 
-import com.codahale.metrics.Timer;
 import com.neverwinterdp.util.FileUtil;
-import com.neverwinterdp.util.monitor.ApplicationMonitor;
-import com.neverwinterdp.util.monitor.ComponentMonitor;
-import com.neverwinterdp.util.monitor.snapshot.MetricFormater;
+import com.neverwinterdp.yara.MetricPrinter;
+import com.neverwinterdp.yara.MetricRegistry;
+import com.neverwinterdp.yara.Timer;
 
 public class QueueUnitTest {
   @Test
@@ -18,8 +17,7 @@ public class QueueUnitTest {
   
   void testQueue(int size, long sizePerSegment) throws Exception {
     FileUtil.removeIfExist("build/queue", false);
-    ApplicationMonitor appMonitor = new ApplicationMonitor() ;
-    ComponentMonitor monitor = appMonitor.createComponentMonitor(Queue.class) ;
+    MetricRegistry mRegistry = new MetricRegistry() ;
     long start = System.currentTimeMillis() ;
     Queue<byte[]> queue = new Queue<byte[]>("build/queue", sizePerSegment) ;
     byte[] data = new byte[1024] ;
@@ -27,16 +25,15 @@ public class QueueUnitTest {
       data[i] = (byte)((i % 32) + 32) ;
     }
     for(int i = 0; i < size; i++) {
-      Timer.Context timeCtx = monitor.timer("write()").time() ;
+      Timer.Context timeCtx = mRegistry.timer("queue", "write").time() ;
       queue.write(data);
       timeCtx.close(); 
     }
     long stop = System.currentTimeMillis() ;
     System.out.println("Insert " + size + " in " + (stop - start) + "ms");
-    MetricFormater formater = new MetricFormater() ;
-    System.out.println(formater.format(appMonitor.snapshot().getRegistry().getTimers())) ;
+    new MetricPrinter().print(mRegistry);
     
-    appMonitor.remove("*") ;
+    mRegistry.remove("*") ;
     start = System.currentTimeMillis() ;
     Segment<byte[]> segment = null ;
     int read = 0 ;
@@ -44,7 +41,7 @@ public class QueueUnitTest {
     while((segment = queue.nextReadSegment(100)) != null) {
       segment.open() ;
       while(segment.hasNext()) {
-        Timer.Context timeCtx = monitor.timer("next()").time() ;
+        Timer.Context timeCtx = mRegistry.timer("queue", "next").time() ;
         segment.next() ;
         read++ ;
         timeCtx.close(); 
@@ -54,7 +51,7 @@ public class QueueUnitTest {
     stop = System.currentTimeMillis() ;
     System.out.println("Read " + read + " in " + (stop - start) + "ms");
     queue.close();
-    System.out.println(formater.format(appMonitor.snapshot().getRegistry().getTimers())) ;
+    new MetricPrinter().print(mRegistry);
   }
   
 }
