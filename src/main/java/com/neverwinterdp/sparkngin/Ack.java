@@ -1,9 +1,12 @@
 package com.neverwinterdp.sparkngin;
+
+import java.io.Serializable;
+
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
  */
-public class Ack {
+public class Ack implements Serializable {
   static public enum Status { OK, ERROR, NOT_AVAIBLE }
 
   private Object messageId ;

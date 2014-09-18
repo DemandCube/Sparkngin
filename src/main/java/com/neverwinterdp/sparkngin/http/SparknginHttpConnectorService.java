@@ -12,7 +12,7 @@ import com.neverwinterdp.sparkngin.Sparkngin;
 import com.neverwinterdp.util.JSONSerializer;
 import com.neverwinterdp.util.LoggerFactory;
 
-public class SparknginHttpService extends AbstractService {
+public class SparknginHttpConnectorService extends AbstractService {
   private LoggerFactory loggerFactory ;
   private Logger logger ;
   private HttpServer server ;
@@ -20,15 +20,15 @@ public class SparknginHttpService extends AbstractService {
   @Inject
   private Sparkngin sparkngin ;
   
-  private SparknginClusterHttpServiceInfo serviceInfo ;
+  private SparknginHttpConnectorServiceInfo serviceInfo ;
   
   @Inject
   public void init(Injector container,
                    LoggerFactory factory, 
                    ModuleProperties moduleProperties,
-                   SparknginClusterHttpServiceInfo serviceInfo) throws Exception {
+                   SparknginHttpConnectorServiceInfo serviceInfo) throws Exception {
     this.loggerFactory = factory ;
-    logger = factory.getLogger(SparknginHttpService.class) ;
+    logger = factory.getLogger(SparknginHttpConnectorService.class) ;
     this.serviceInfo = serviceInfo ;
     if(moduleProperties.isDataDrop()) cleanup() ;
   }
@@ -51,7 +51,8 @@ public class SparknginHttpService extends AbstractService {
       server.setDefault(fileHandler) ;
     }
     
-    server.add("/message", new MessageRouteHandler(sparkngin));
+    server.add("/message/json", new JSONMessageRouteHandler(sparkngin));
+    server.add("/message/jbinary", new JBinaryMessageRouteHandler(sparkngin));
     server.add("/tracking/site/:site", new TrackingPixelRouteHandler(sparkngin));
     server.startAsDeamon();
     logger.info("Finish start()");

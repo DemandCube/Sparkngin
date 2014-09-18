@@ -32,7 +32,7 @@ public class MassConnectionSparknginHttpServerPerformanceTest {
   }
 
   int NUM_OF_SERVER_THREAD = 5 ;
-  int NUM_OF_CONCURRENT_WORKERS = 25 * NUM_OF_SERVER_THREAD ;
+  int NUM_OF_CONCURRENT_WORKERS = 5 * NUM_OF_SERVER_THREAD ;
   int NUM_OF_WORKERS = 2 * NUM_OF_CONCURRENT_WORKERS ;
   int NUM_OF_MESSAGE_PER_WORKER = 1000 ;
   int EXPECT_MESSAGES_SENT = NUM_OF_WORKERS * NUM_OF_MESSAGE_PER_WORKER ; 
@@ -49,7 +49,7 @@ public class MassConnectionSparknginHttpServerPerformanceTest {
     server = new HttpServer() ;
     server.setNumberOfWorkers(NUM_OF_SERVER_THREAD);
     mRegistry = new MetricRegistry() ;
-    server.add("/message", new MessageRouteHandler(new Sparkngin(mRegistry, forwarder, "build/queue/data"))) ;
+    server.add("/message/json", new JSONMessageRouteHandler(new Sparkngin(mRegistry, forwarder, "build/queue/data"))) ;
     server.setDefault(new StaticFileHandler(".")) ;
     server.startAsDeamon() ;
     Thread.sleep(2000) ;
@@ -87,9 +87,9 @@ public class MassConnectionSparknginHttpServerPerformanceTest {
     }
 
     public void run() {
-      HttpSparknginClient client = null ;
+      JSONHttpSparknginClient client = null ;
       try {
-        client = new HttpSparknginClient ("127.0.0.1", 8080, 100) ;
+        client = new JSONHttpSparknginClient ("127.0.0.1", 8080, 100) ;
         
         byte[] data = new byte[1024] ;
         for(int i = 0; i < data.length; i++) {
@@ -99,7 +99,7 @@ public class MassConnectionSparknginHttpServerPerformanceTest {
         for(int i = 0; i < numOfMessages; i++) {
           Message message = new Message("m" + i, data, true) ;
           //The message has to be sent in 5s
-          client.send(message, 30000);
+          client.sendPost(message, 30000);
           messageCounter.incrementAndGet() ;
         }
         

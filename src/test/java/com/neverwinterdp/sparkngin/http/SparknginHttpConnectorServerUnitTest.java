@@ -19,7 +19,7 @@ import com.neverwinterdp.yara.MetricRegistry;
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
  */
-public class SparknginHttpServerUnitTest {
+public class SparknginHttpConnectorServerUnitTest {
   static {
     System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
   }
@@ -34,7 +34,7 @@ public class SparknginHttpServerUnitTest {
     forwarder = new NullDevMessageForwarder() ;
     server = new HttpServer() ;
     mRegistry = new MetricRegistry() ;
-    server.add("/message", new MessageRouteHandler(new Sparkngin(mRegistry, forwarder, "build/queue/data"))) ;
+    server.add("/message/json", new JSONMessageRouteHandler(new Sparkngin(mRegistry, forwarder, "build/queue/data"))) ;
     server.setDefault(new StaticFileHandler(".")) ;
     server.startAsDeamon() ;
     Thread.sleep(2000) ;
@@ -60,7 +60,7 @@ public class SparknginHttpServerUnitTest {
     AsyncHttpClient client = new AsyncHttpClient ("127.0.0.1", 8080, handler) ;
     for(int i = 0; i < NUM_OF_MESSAGES; i++) {
       Message message = new Message("m" + i, "message " + i, true) ;
-      client.post("/message", message);
+      client.post("/message/json", message);
     }
     long stopTime = System.currentTimeMillis() + 10000 ;
     while(System.currentTimeMillis() < stopTime && 

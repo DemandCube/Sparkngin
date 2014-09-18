@@ -32,7 +32,7 @@ public class SparknginHttpPerformanceTest {
     server.setPort(7080);
     mRegistry = new MetricRegistry();
     Sparkngin sparkngin = new Sparkngin(mRegistry, forwarder, "build/queue/data") ;
-    server.add("/message", new MessageRouteHandler(sparkngin));
+    server.add("/message", new JSONMessageRouteHandler(sparkngin));
     server.startAsDeamon();
     Thread.sleep(2000);
   }
@@ -87,12 +87,12 @@ public class SparknginHttpPerformanceTest {
     
     public void run() {
       try {
-        HttpSparknginClient mclient = new HttpSparknginClient("127.0.0.1", 7080, 500);
+        JSONHttpSparknginClient mclient = new JSONHttpSparknginClient("127.0.0.1", 7080, 500);
         int hashCode = hashCode();
         for(int i = 0; i < NUM_OF_MESSAGES; i++) {
           Message message = new Message("m-" + hashCode + "-"+ i, new byte[1024], true);
           Timer.Context ctx = clientMonitor.timer("sparkngin", "client", "send").time();
-          mclient.send(message, 5000);
+          mclient.sendPost(message, 5000);
           ctx.stop();
         }
         mclient.waitAndClose(30000);
