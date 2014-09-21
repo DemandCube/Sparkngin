@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 /**
  * Formats data to be sent to Sparkngin
@@ -24,14 +25,17 @@ public class RequestLog {
    * Constructor
    * @param httpReq HttpRequest object to be sent to Sparkngin
    */
-  public RequestLog(HttpRequest httpReq) {
+  public RequestLog(HttpRequest httpReq, Pattern[] headerMatcher) {
     this.uri = httpReq.getUri() ;
     this.method = httpReq.getMethod().name() ;
     requestHeaders = new HashMap<String, String>() ;
     Iterator<Entry<String, String>> i = httpReq.headers().iterator() ;
     while(i.hasNext()) {
       Entry<String, String> entry =i.next();
-      requestHeaders.put(entry.getKey(), entry.getValue()) ;
+      String key = entry.getKey() ;
+      if(extractHeader(key, headerMatcher)) {
+        requestHeaders.put(key, entry.getValue()) ;
+      }
     }
   }
 
@@ -65,5 +69,13 @@ public class RequestLog {
 
   public void setRequestHeaders(Map<String, String> requestHeaders) {
     this.requestHeaders = requestHeaders;
+  }
+  
+  private boolean extractHeader(String name, Pattern[] headerMatcher) {
+    if(headerMatcher == null) return true ;
+    for(Pattern sel : headerMatcher) {
+      if(sel.matcher(name).matches()) return true; 
+    }
+    return false ;
   }
 }

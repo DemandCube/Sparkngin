@@ -43,17 +43,17 @@ public class SparknginHttpConnectorService extends AbstractService {
     logger.info("Start start()");
     logger.info("Properties:\n" + JSONSerializer.INSTANCE.toString(serviceInfo)) ;
     server = new HttpServer() ;
-    server.setPort(serviceInfo.getHttpListenPort()) ;
+    server.setPort(serviceInfo.httpListenPort()) ;
     server.setLoggerFactory(loggerFactory) ;
-    if(serviceInfo.getWwwDir() != null) {
-      StaticFileHandler fileHandler = new StaticFileHandler(serviceInfo.getWwwDir()) ;
+    if(serviceInfo.wwwDir() != null) {
+      StaticFileHandler fileHandler = new StaticFileHandler(serviceInfo.wwwDir()) ;
       fileHandler.setLogger(loggerFactory.getLogger(StaticFileHandler.class)) ;
       server.setDefault(fileHandler) ;
     }
     
     server.add("/message/json", new JSONMessageRouteHandler(sparkngin));
     server.add("/message/jbinary", new JBinaryMessageRouteHandler(sparkngin));
-    server.add("/tracking/site/:site", new TrackingPixelRouteHandler(sparkngin));
+    server.add("/tracking/site/:site", new TrackingPixelRouteHandler(sparkngin, serviceInfo.getProperties()));
     server.startAsDeamon();
     logger.info("Finish start()");
   }

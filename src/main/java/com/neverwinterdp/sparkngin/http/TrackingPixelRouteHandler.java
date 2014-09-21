@@ -15,11 +15,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Pattern;
 
 import com.neverwinterdp.message.Message;
 import com.neverwinterdp.netty.http.RouteHandlerGeneric;
 import com.neverwinterdp.sparkngin.Sparkngin;
 import com.neverwinterdp.util.JSONSerializer;
+import com.neverwinterdp.util.MapUtil;
+import com.neverwinterdp.util.text.StringUtil;
 /**
  * Route to handle returning a 1x1 100% transparent png
  * Responds to GET requests in HTTP
@@ -53,9 +56,21 @@ public class TrackingPixelRouteHandler extends RouteHandlerGeneric {
   
   private Sparkngin sparkngin ;
   private AtomicLong idTracker  = new AtomicLong();
+  private Pattern[]  headerMatcher ;
+  private String logTopic = "log.pixel";
   
-  public TrackingPixelRouteHandler(Sparkngin sparkngin) {
+  public TrackingPixelRouteHandler(Sparkngin sparkngin, Map<String, String> props) {
     this.sparkngin = sparkngin ;
+    
+    this.logTopic = MapUtil.getString(props, "tracking.site.log-topic", "log.pixel") ;
+    String extractHeaders = MapUtil.getString(props,"tracking.site.extract-headers", null) ;
+    if(extractHeaders != null) {
+      String[] extractHeader = StringUtil.toStringArray(extractHeaders) ;
+      headerMatcher = new Pattern[extractHeader.length] ;
+      for(int i = 0; i < extractHeader.length; i++) {
+        headerMatcher[i] = Pattern.compile(extractHeader[i], Pattern.CASE_INSENSITIVE) ;
+      }
+    }
   }
   
   /**
@@ -77,11 +92,10 @@ public class TrackingPixelRouteHandler extends RouteHandlerGeneric {
   }
   
   void sparknginLog(HttpRequest request, FullHttpResponse response) {
-    RequestLog log = new RequestLog(request);
-    String data = JSONSerializer.INSTANCE.toString(log) ;
+    RequestLog log = new RequestLog(request, headerMatcher);
     //Send request log to sparkngin
-    Message message = new Message("id-" + idTracker.incrementAndGet(), data, false) ;
-    message.getHeader().setTopic("log.pixel") ;
+    Message message = new Message("id-" + idTracker.incrementAndGet(), log, false) ;
+    message.getHeader().setTopic(logTopic) ;
     sparkngin.push(message) ;
   }
   

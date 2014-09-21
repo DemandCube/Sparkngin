@@ -16,6 +16,14 @@ public class KafkaMessageForwarder implements MessageForwarder {
   private Logger logger ;
   private KafkaMessageProducer producer ;
 
+  public KafkaMessageForwarder() {}
+  
+  public KafkaMessageForwarder(LoggerFactory lfactory,
+                               MetricRegistry mRegistry,Map<String, String> props) {
+    init(lfactory, mRegistry, props, "127.0.0.1:9092") ;
+  }
+  
+  
   @Inject
   public void init(LoggerFactory lfactory,
                    MetricRegistry mRegistry, 

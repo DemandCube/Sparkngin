@@ -111,11 +111,12 @@ def doRelease(String releaseDir) {
   }
 
   def jars = [ 
-    "commons.utils", "commons.api", "commons.cluster", "commons.netty", "commons.zookeeper", "queuengin",
+    "commons.utils", "commons.api", "commons.yara", "commons.cluster", "commons.netty", "commons.zookeeper", "queuengin",
     "jackson-core-2.2.2", "jackson-databind", "jackson-annotations", "jcommander", "reflections", "guava", "javassist",
     'guice', 'javax.inject', 'hazelcast', 'aopalliance',
     "kafka", "scala-library",
     'zookeeper', 'zkclient',
+    "metrics-core", //"metrics-json", "metrics-annotation",
     "netty-all", 'jzlib', 'chronicle', "lang-6.1.4",
     "log4j", "slf4j-api", "slf4j-log4j12"
   ] 
