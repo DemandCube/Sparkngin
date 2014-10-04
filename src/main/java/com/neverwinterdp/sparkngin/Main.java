@@ -6,12 +6,10 @@ import java.util.Map;
 import com.beust.jcommander.DynamicParameter;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
-import com.neverwinterdp.message.Message;
 import com.neverwinterdp.netty.http.HttpServer;
 import com.neverwinterdp.sparkngin.http.JBinaryMessageRouteHandler;
 import com.neverwinterdp.sparkngin.http.JSONMessageRouteHandler;
 import com.neverwinterdp.sparkngin.http.TrackingPixelRouteHandler;
-import com.neverwinterdp.util.JSONSerializer;
 import com.neverwinterdp.util.LoggerFactory;
 import com.neverwinterdp.yara.MetricRegistry;
 
@@ -49,18 +47,7 @@ public class Main {
     if("kafka".equals(options.forwarder)) {
       forwarder = new KafkaMessageForwarder(lfactory, mRegistry, options.kafkaParams) ;
     } else {
-      forwarder = new NullDevMessageForwarder() {
-        public void dump(Message message) {
-          System.out.println(JSONSerializer.INSTANCE.toString(message.getHeader()));
-          try {
-            Class<?> type = Class.forName(message.getData().getType()) ;
-            Object object = message.getData().getDataAs(type) ;
-            System.out.println(JSONSerializer.INSTANCE.toString(object));
-          } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-          }
-        }
-      };
+      forwarder = new NullDevMessageForwarder(options.sparknginParams) ;
     }
     Sparkngin sparkngin = new Sparkngin(mRegistry, forwarder, options.dataDir) ;
     server.add("/message/json", new JSONMessageRouteHandler(sparkngin));
