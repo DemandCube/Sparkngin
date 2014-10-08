@@ -45,11 +45,14 @@ public class TrackingPixelRouteHandlerUnitTest {
     MetricRegistry mRegistry = new MetricRegistry() ;
     Sparkngin sparkngin = new Sparkngin(mRegistry, forwarder, "build/queue/data") ;
     server = new HttpServer() ;
+    
+    server.startAsDeamon() ;
+    
     Map<String, String> config = new HashMap<String, String>() ;
     config.put("tracking.site.extract-headers", "Host.*,content.*") ;
     config.put("tracking.site.log-topic", LOG_TOPIC) ;
     server.add("/pixel", new TrackingPixelRouteHandler(sparkngin, config)) ;
-    server.startAsDeamon() ;
+    
     Thread.sleep(2000) ;
   }
   
@@ -68,7 +71,7 @@ public class TrackingPixelRouteHandlerUnitTest {
       client.get("/pixel") ;
     }
     //Wait to make sure all the ack are return to the client
-    Thread.sleep(1000);
+    Thread.sleep(3000);
     //Make sure testCount responses have been received
     assertEquals(LOOP, handler.getCount());
     assertEquals(LOOP, forwarder.getForwardCount());

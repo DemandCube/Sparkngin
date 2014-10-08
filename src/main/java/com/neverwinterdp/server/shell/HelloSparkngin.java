@@ -23,7 +23,7 @@ public class HelloSparkngin {
   }
 
   public void run(final Options options) throws Exception {
-    final JSONHttpSparknginClient client = new JSONHttpSparknginClient (options.host, options.port,300) ;
+    final JSONHttpSparknginClient client = new JSONHttpSparknginClient (options.host, options.port,300, true) ;
     for(int i = 0; i < options.numMessage; i++) {
       Message message = new Message("m" + i, new byte[1024], true) ;
       message.getHeader().setTopic(options.topic);

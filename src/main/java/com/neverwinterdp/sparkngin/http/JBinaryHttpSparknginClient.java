@@ -11,8 +11,8 @@ import com.neverwinterdp.util.IOUtil;
 import com.neverwinterdp.util.JSONSerializer;
 
 public class JBinaryHttpSparknginClient extends AbstractHttpSparknginClient {
-  public JBinaryHttpSparknginClient(String host, int port, int bufferSize) throws Exception {
-    super(host, port, bufferSize) ;
+  public JBinaryHttpSparknginClient(String host, int port, int bufferSize, boolean connect) throws Exception {
+    super(host, port, bufferSize, connect) ;
     setPath("/message/jbinary") ;
   }
   

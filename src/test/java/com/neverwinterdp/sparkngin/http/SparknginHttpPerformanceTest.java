@@ -5,10 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.neverwinterdp.message.Message;
-import com.neverwinterdp.netty.http.HttpServer;
-import com.neverwinterdp.sparkngin.NullDevMessageForwarder;
-import com.neverwinterdp.sparkngin.Sparkngin;
-import com.neverwinterdp.util.FileUtil;
 import com.neverwinterdp.yara.MetricPrinter;
 import com.neverwinterdp.yara.MetricRegistry;
 import com.neverwinterdp.yara.Timer;
@@ -17,24 +13,12 @@ import com.neverwinterdp.yara.Timer;
  * @email  tuan08@gmail.com
  */
 public class SparknginHttpPerformanceTest {
-  static {
-    System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties");
-  }
 
-  private HttpServer server;
-  private MetricRegistry mRegistry ;
+  private SparknginServer server;
   
   @Before
   public void setup() throws Exception {
-    FileUtil.removeIfExist("build/queue", false);
-    NullDevMessageForwarder forwarder = new NullDevMessageForwarder();
-    server = new HttpServer();
-    server.setPort(7080);
-    mRegistry = new MetricRegistry();
-    Sparkngin sparkngin = new Sparkngin(mRegistry, forwarder, "build/queue/data") ;
-    server.add("/message", new JSONMessageRouteHandler(sparkngin));
-    server.startAsDeamon();
-    Thread.sleep(2000);
+    server = new SparknginServer() ;
   }
   
   @After
@@ -53,10 +37,10 @@ public class SparknginHttpPerformanceTest {
   
   public void runProfile(int numOfThread, int numOfMessagePerThread) throws Exception {
     long start = System.currentTimeMillis();
-    mRegistry.remove("*");
+    server.metricRegistry.remove("*");
     Thread[] thread = new Thread[numOfThread];
     for(int i = 0; i < thread.length; i++) {
-      thread[i] = new Thread(new Producer(mRegistry, numOfMessagePerThread));
+      thread[i] = new Thread(new Producer(server.metricRegistry, numOfMessagePerThread));
       thread[i].start(); 
     }
     boolean finished = false;
@@ -73,7 +57,7 @@ public class SparknginHttpPerformanceTest {
     }
     long elapsed = System.currentTimeMillis() - start;
     System.out.println("\nRun test in  " + elapsed + "ms");
-    new MetricPrinter().print(mRegistry) ;
+    new MetricPrinter().print(server.metricRegistry) ;
   }
   
   static public class Producer implements Runnable {
@@ -87,7 +71,7 @@ public class SparknginHttpPerformanceTest {
     
     public void run() {
       try {
-        JSONHttpSparknginClient mclient = new JSONHttpSparknginClient("127.0.0.1", 7080, 500);
+        JSONHttpSparknginClient mclient = new JSONHttpSparknginClient("127.0.0.1", 7080, 500, true);
         int hashCode = hashCode();
         for(int i = 0; i < NUM_OF_MESSAGES; i++) {
           Message message = new Message("m-" + hashCode + "-"+ i, new byte[1024], true);

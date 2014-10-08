@@ -8,12 +8,12 @@ import com.neverwinterdp.sparkngin.Ack;
 import com.neverwinterdp.util.JSONSerializer;
 
 public class JSONHttpSparknginClient extends AbstractHttpSparknginClient {
-  public JSONHttpSparknginClient(String host, int port, int bufferSize) throws Exception {
-    super(host, port, bufferSize) ;
+  
+  public JSONHttpSparknginClient(String host, int port, int bufferSize, boolean connect) throws Exception {
+    super(host, port, bufferSize, connect) ;
     setPath("/message/json") ;
   }
   
-    
   protected Ack toAck(HttpContent content) {
     String json = content.content().toString(CharsetUtil.UTF_8);
     Ack ack = JSONSerializer.INSTANCE.fromString(json, Ack.class) ;

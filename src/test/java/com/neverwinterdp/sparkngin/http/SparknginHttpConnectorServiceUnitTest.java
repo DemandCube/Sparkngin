@@ -33,7 +33,7 @@ public class SparknginHttpConnectorServiceUnitTest {
   @Test
   public void testSendJSONMessage() throws Exception {
     int NUM_OF_MESSAGES = 100 ;
-    JSONHttpSparknginClient client = new JSONHttpSparknginClient ("127.0.0.1", 7080, 300) ;
+    JSONHttpSparknginClient client = new JSONHttpSparknginClient ("127.0.0.1", 7080, 300, true) ;
     for(int i = 0; i < NUM_OF_MESSAGES; i++) {
       SampleEvent event = new SampleEvent("event-" + i, "event " + i) ;
       Message message = new Message("m" + i, event, true) ;
@@ -53,7 +53,7 @@ public class SparknginHttpConnectorServiceUnitTest {
   @Test
   public void testSendJBinary() throws Exception {
     int NUM_OF_MESSAGES = 1000 ;
-    JBinaryHttpSparknginClient client = new JBinaryHttpSparknginClient("127.0.0.1", 7080, 300) ;
+    JBinaryHttpSparknginClient client = new JBinaryHttpSparknginClient("127.0.0.1", 7080, 300, true) ;
     for(int i = 0; i < NUM_OF_MESSAGES; i++) {
       SampleEvent event = new SampleEvent("event-" + i, "event " + i) ;
       Message message = new Message("m" + i, event, true) ;

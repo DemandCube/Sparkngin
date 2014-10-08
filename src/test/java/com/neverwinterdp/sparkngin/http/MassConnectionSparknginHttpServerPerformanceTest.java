@@ -15,44 +15,24 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.neverwinterdp.message.Message;
-import com.neverwinterdp.netty.http.HttpServer;
-import com.neverwinterdp.netty.http.StaticFileHandler;
 import com.neverwinterdp.netty.http.client.ResponseHandler;
-import com.neverwinterdp.sparkngin.NullDevMessageForwarder;
-import com.neverwinterdp.sparkngin.Sparkngin;
-import com.neverwinterdp.util.FileUtil;
-import com.neverwinterdp.yara.MetricRegistry;
 /**
  * @author Tuan Nguyen
  * @email  tuan08@gmail.com
  */
 public class MassConnectionSparknginHttpServerPerformanceTest {
-  static {
-    System.setProperty("log4j.configuration", "file:src/main/resources/log4j.properties") ;
-  }
-
   int NUM_OF_SERVER_THREAD = 5 ;
   int NUM_OF_CONCURRENT_WORKERS = 5 * NUM_OF_SERVER_THREAD ;
   int NUM_OF_WORKERS = 2 * NUM_OF_CONCURRENT_WORKERS ;
   int NUM_OF_MESSAGE_PER_WORKER = 1000 ;
   int EXPECT_MESSAGES_SENT = NUM_OF_WORKERS * NUM_OF_MESSAGE_PER_WORKER ; 
   
-  private NullDevMessageForwarder forwarder ;
-  private HttpServer server ;
-  private MetricRegistry mRegistry  ;
+  private SparknginServer server ;
   private AtomicLong messageCounter = new AtomicLong() ;
 
   @Before
   public void setup() throws Exception {
-    FileUtil.removeIfExist("build/queue", false) ;
-    forwarder = new NullDevMessageForwarder() ;
-    server = new HttpServer() ;
-    server.setNumberOfWorkers(NUM_OF_SERVER_THREAD);
-    mRegistry = new MetricRegistry() ;
-    server.add("/message/json", new JSONMessageRouteHandler(new Sparkngin(mRegistry, forwarder, "build/queue/data"))) ;
-    server.setDefault(new StaticFileHandler(".")) ;
-    server.startAsDeamon() ;
-    Thread.sleep(2000) ;
+    server = new SparknginServer() ;
   }
 
   @After
@@ -74,9 +54,9 @@ public class MassConnectionSparknginHttpServerPerformanceTest {
     long executeTime = System.currentTimeMillis() - startTime ;
     System.out.println("Expect sent:  " + EXPECT_MESSAGES_SENT) ;
     System.out.println("Sent:         " + messageCounter.get());
-    System.out.println("Forward:      " + forwarder.getProcessCount());
+    System.out.println("Forward:      " + server.forwarder.getProcessCount());
     System.out.println("Execute Time: " + executeTime + "ms");
-    System.out.println("Forward After 30s:      " + forwarder.getProcessCount());
+    System.out.println("Forward After 30s:      " + server.forwarder.getProcessCount());
   }
 
   public class MessageProducer implements Runnable {
@@ -89,7 +69,7 @@ public class MassConnectionSparknginHttpServerPerformanceTest {
     public void run() {
       JSONHttpSparknginClient client = null ;
       try {
-        client = new JSONHttpSparknginClient ("127.0.0.1", 8080, 100) ;
+        client = new JSONHttpSparknginClient ("127.0.0.1", server.server.getPort(), 100, true) ;
         
         byte[] data = new byte[1024] ;
         for(int i = 0; i < data.length; i++) {

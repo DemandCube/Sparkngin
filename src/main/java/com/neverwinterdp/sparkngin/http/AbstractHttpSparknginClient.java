@@ -21,10 +21,22 @@ abstract public class AbstractHttpSparknginClient {
   private int sendCount = 0;
   private int errorCount = 0;
   
-  public AbstractHttpSparknginClient(String host, int port, int bufferSize) throws Exception {
-    client = new AsyncHttpClient (host, port, new MessageResponseHandler()) ;
+  public AbstractHttpSparknginClient(String host, int port, int bufferSize, boolean connect) throws Exception {
+    client = new AsyncHttpClient(host, port, new MessageResponseHandler(), connect) ;
     this.bufferSize = bufferSize ;
     waitingAckMessages = new LinkedHashMap<String, Message>() ;
+  }
+  
+  public boolean isConnected() { return client.isConnected() ; }
+  
+  public void setNotConnected() { client.setNotConnected(); }
+  
+  public boolean connect() throws Exception {
+    return client.connect();
+  }
+  
+  public boolean connect(long timeout, long tryPeriod) throws Exception {
+    return client.connect(timeout, tryPeriod);
   }
   
   public void setPath(String path) { this.path = path ; }

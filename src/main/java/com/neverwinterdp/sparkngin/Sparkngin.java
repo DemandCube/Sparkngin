@@ -3,10 +3,10 @@ package com.neverwinterdp.sparkngin;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.name.Named;
+import com.neverwinterdp.buffer.chronicle.MultiSegmentQueue;
+import com.neverwinterdp.buffer.chronicle.Segment;
 import com.neverwinterdp.message.Message;
 import com.neverwinterdp.server.module.ModuleProperties;
-import com.neverwinterdp.sparkngin.queue.Queue;
-import com.neverwinterdp.sparkngin.queue.Segment;
 import com.neverwinterdp.util.FileUtil;
 import com.neverwinterdp.yara.MetricRegistry;
 import com.neverwinterdp.yara.Timer;
@@ -19,7 +19,7 @@ public class Sparkngin {
   private String queueDir ;
   
   private MessageForwarder forwarder ;
-  private Queue<Message> queue ;
+  private MultiSegmentQueue<Message> queue ;
   private Thread forwarderThread ;
   private MetricRegistry mRegistry ;
   
@@ -28,7 +28,7 @@ public class Sparkngin {
   public Sparkngin(MetricRegistry mRegistry, MessageForwarder mforwarder, String storeDir) throws Exception {
     this.mRegistry = mRegistry ;
     this.forwarder = mforwarder ;
-    queue = new Queue<Message>(storeDir, 10000l) ;
+    queue = new MultiSegmentQueue<Message>(storeDir, 10000l) ;
     forwarderThread = new ForwarderThread() ;
     forwarderThread.start() ;
   }
@@ -41,7 +41,7 @@ public class Sparkngin {
     if(queueDir == null) {
       queueDir = moduleProperties.getDataDir() + "/sparkngin/queue" ;
     }
-    queue = new Queue<Message>(queueDir, 10000l) ;
+    queue = new MultiSegmentQueue<Message>(queueDir, 10000l) ;
     forwarderThread = new ForwarderThread() ;
     forwarderThread.start() ;
   }
@@ -51,7 +51,7 @@ public class Sparkngin {
   public boolean cleanup() throws Exception {
     queue.close(); 
     FileUtil.removeIfExist(queueDir, false);
-    queue = new Queue<Message>(queueDir, 10000l) ;
+    queue = new MultiSegmentQueue<Message>(queueDir, 10000l) ;
     return true ;
   }
   
@@ -64,7 +64,7 @@ public class Sparkngin {
     Timer.Context ctx = mRegistry.timer(Sparkngin.class.getSimpleName(), "push").time() ;
     Ack ack = new Ack() ;
     try {
-      queue.write(message);
+      queue.writeObject(message);
       ack.setMessageId(message.getHeader().getKey());
       ack.setStatus(Ack.Status.OK);
     } catch (Exception e) {
@@ -105,7 +105,7 @@ public class Sparkngin {
             segment.open(); 
             while(segment.hasNext()) {
               Timer.Context readCtx = mRegistry.timer(Sparkngin.class.getSimpleName(), "read").time() ;
-              Message message = segment.next() ;
+              Message message = segment.nextObject() ;
               readCtx.close(); 
               forward(message) ;
             }
