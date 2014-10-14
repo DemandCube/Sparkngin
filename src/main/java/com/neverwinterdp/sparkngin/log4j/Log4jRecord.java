@@ -1,10 +1,13 @@
 package com.neverwinterdp.sparkngin.log4j;
 
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.spi.LoggingEvent;
 
 public class Log4jRecord implements Serializable {
+  static AtomicLong idTracker = new AtomicLong() ;
+  
   private long   timestamp;
   private String threadName ;
   private String loggerName;
@@ -23,46 +26,26 @@ public class Log4jRecord implements Serializable {
   }
 
   public String getId() {
-    return this.loggerName + "-"  + this.timestamp + "-" + message.hashCode() ;
+    return "id-"  + this.timestamp + "-" + idTracker.incrementAndGet() ;
   }
   
-  public long getTimestamp() {
-    return timestamp;
-  }
+  public long getTimestamp() { return timestamp; }
 
-  public void setTimestamp(long timestamp) {
-    this.timestamp = timestamp;
-  }
+  public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
 
-  public String getThreadName() {
-    return threadName;
-  }
+  public String getThreadName() { return threadName; }
 
-  public void setThreadName(String threadName) {
-    this.threadName = threadName;
-  }
+  public void setThreadName(String threadName) { this.threadName = threadName; }
 
-  public String getLoggerName() {
-    return loggerName;
-  }
+  public String getLoggerName() { return loggerName; }
 
-  public void setLoggerName(String loggerName) {
-    this.loggerName = loggerName;
-  }
+  public void setLoggerName(String loggerName) { this.loggerName = loggerName; }
 
-  public String getLevel() {
-    return level;
-  }
+  public String getLevel() { return level; }
 
-  public void setLevel(String level) {
-    this.level = level;
-  }
+  public void setLevel(String level) { this.level = level; }
 
-  public String getMessage() {
-    return message;
-  }
+  public String getMessage() { return message; }
 
-  public void setMessage(String message) {
-    this.message = message;
-  }
+  public void setMessage(String message) { this.message = message; }
 }

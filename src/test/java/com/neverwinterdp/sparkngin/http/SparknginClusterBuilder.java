@@ -12,7 +12,8 @@ public class SparknginClusterBuilder {
   static {
     System.setProperty("app.dir", "build/cluster") ;
     System.setProperty("app.config.dir", "src/app/config") ;
-    System.setProperty("log4j.configuration", "file:src/app/config/log4j.properties") ;
+    //System.setProperty("log4j.configuration", "file:src/app/config/log4j.properties") ;
+    System.setProperty("log4j.configuration", "file:src/test/resources/log4j.properties") ;
   }
   
   public static String TOPIC = "metrics.consumer" ;

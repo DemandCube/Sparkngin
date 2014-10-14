@@ -14,7 +14,7 @@ public class SparknginHttpConnectorServiceInfo extends ServiceInfo {
   @Inject(optional = true) @Named("sparkngin:http-www-dir")
   private String wwwDir = null;
   
-  @Named("sparknginProperties") 
+  @Inject @Named("sparknginProperties") 
   private Map<String, String> properties ;
   
   public int httpListenPort() { return httpListenPort; }

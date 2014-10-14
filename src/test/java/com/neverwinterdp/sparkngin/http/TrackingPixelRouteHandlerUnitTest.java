@@ -33,8 +33,6 @@ public class TrackingPixelRouteHandlerUnitTest {
     //System.setProperty("io.netty.leakDetectionLevel", "advanced") ;
   }
 
-  static String LOG_TOPIC = "log.pixel.custom" ;
-  
   private HttpServer server ;
   private AssertMessageForwarder forwarder  ;
   
@@ -50,8 +48,7 @@ public class TrackingPixelRouteHandlerUnitTest {
     
     Map<String, String> config = new HashMap<String, String>() ;
     config.put("tracking.site.extract-headers", "Host.*,content.*") ;
-    config.put("tracking.site.log-topic", LOG_TOPIC) ;
-    server.add("/pixel", new TrackingPixelRouteHandler(sparkngin, config)) ;
+    server.add("/tracker/:trackerName/:site", new TrackingPixelRouteHandler(sparkngin, config)) ;
     
     Thread.sleep(2000) ;
   }
@@ -68,7 +65,7 @@ public class TrackingPixelRouteHandlerUnitTest {
     int LOOP = 1;
     
     for(int i = 0; i < LOOP; i++) {
-      client.get("/pixel") ;
+      client.get("/tracker/metrics.tracker/githup.com") ;
     }
     //Wait to make sure all the ack are return to the client
     Thread.sleep(3000);
@@ -116,7 +113,7 @@ public class TrackingPixelRouteHandlerUnitTest {
     
     public void forward(Message message) throws Exception {
       count++ ;
-      Assert.assertEquals(LOG_TOPIC, message.getHeader().getTopic()) ;
+      Assert.assertEquals("metrics.tracker", message.getHeader().getTopic()) ;
       RequestLog log = message.getData().getDataAs(RequestLog.class) ;
       Assert.assertEquals(2, log.getRequestHeaders().size());
       Assert.assertNotNull(log.getRequestHeaders().get("Host"));
@@ -124,6 +121,14 @@ public class TrackingPixelRouteHandlerUnitTest {
 
     @Override
     public void close() { }
-    
+
+    public boolean hasError() { return false; }
+
+    public void setError(Throwable error) {
+    }
+
+    public boolean reconnect() {
+      return true;
+    }
   }
 }

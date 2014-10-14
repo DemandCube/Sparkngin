@@ -7,10 +7,12 @@ import io.netty.handler.codec.http.Cookie;
 import io.netty.handler.codec.http.CookieDecoder;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.ServerCookieEncoder;
 import static io.netty.handler.codec.http.HttpHeaders.Names.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -57,12 +59,10 @@ public class TrackingPixelRouteHandler extends RouteHandlerGeneric {
   private Sparkngin sparkngin ;
   private AtomicLong idTracker  = new AtomicLong();
   private Pattern[]  headerMatcher ;
-  private String logTopic = "log.pixel";
   
   public TrackingPixelRouteHandler(Sparkngin sparkngin, Map<String, String> props) {
     this.sparkngin = sparkngin ;
     
-    this.logTopic = MapUtil.getString(props, "tracking.site.log-topic", "log.pixel") ;
     String extractHeaders = MapUtil.getString(props,"tracking.site.extract-headers", null) ;
     if(extractHeaders != null) {
       String[] extractHeader = StringUtil.toStringArray(extractHeaders) ;
@@ -92,10 +92,10 @@ public class TrackingPixelRouteHandler extends RouteHandlerGeneric {
   }
   
   void sparknginLog(HttpRequest request, FullHttpResponse response) {
-    RequestLog log = new RequestLog(request, headerMatcher);
     //Send request log to sparkngin
+    RequestLog log = new RequestLog(request, headerMatcher);
     Message message = new Message("id-" + idTracker.incrementAndGet(), log, false) ;
-    message.getHeader().setTopic(logTopic) ;
+    message.getHeader().setTopic(log.getTrackerName()) ;
     sparkngin.push(message) ;
   }
   

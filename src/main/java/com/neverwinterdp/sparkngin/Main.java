@@ -52,7 +52,7 @@ public class Main {
     Sparkngin sparkngin = new Sparkngin(mRegistry, forwarder, options.dataDir) ;
     server.add("/message/json", new JSONMessageRouteHandler(sparkngin));
     server.add("/message/jbinary", new JBinaryMessageRouteHandler(sparkngin));
-    server.add("/tracking/site/:site", new TrackingPixelRouteHandler(sparkngin, options.sparknginParams));
+    server.add("/tracker/:trackerName/:site", new TrackingPixelRouteHandler(sparkngin, options.sparknginParams));
     server.startAsDeamon() ;
     Thread.currentThread().join();
   }
